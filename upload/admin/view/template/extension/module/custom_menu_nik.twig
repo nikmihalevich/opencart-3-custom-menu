@@ -1,0 +1,348 @@
+{{ header }}
+<style>
+  .sidenav {
+    height: 100%;
+    z-index: 1;
+    padding-top: 20px;
+  }
+
+  .sidenav span, .dropdown-btn {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 20px;
+    color: black;
+    display: block;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+    outline: none;
+    border: 1px solid #e3e3e3;
+    margin: 5px;
+    width: -webkit-fill-available;
+  }
+
+  .main {
+    margin-left: 200px;
+    font-size: 20px;
+    padding: 0 10px;
+  }
+
+  .active {
+    background-color: #EEEEEE;
+  }
+
+  .dropdown-container {
+    display: none;
+    padding-left: 50px;
+  }
+
+  .fa-caret-down {
+    float: right;
+    padding-right: 8px;
+  }
+
+
+
+  header {
+    width: 100%;
+    height: 50px;
+  }
+
+  header > nav > div {
+    float: left;
+    width: 19.2%;
+    height: 100%;
+    position: relative;
+    border: 1px solid #e3e3e3;
+    margin: 5px;
+  }
+
+  header > nav > div > a {
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    display: block;
+    line-height: 50px;
+    color: black;
+    transition: background-color 0.2s ease;
+    text-transform: uppercase;
+  }
+
+  header > nav > div:hover > a {
+    background-color: rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+  }
+
+  header > nav > div > div {
+    display: none;
+    overflow: hidden;
+    background-color: white;
+    min-width: 200%;
+    position: absolute;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+    padding: 10px;
+  }
+
+  header > nav > div:not(:first-of-type):not(:last-of-type) > div {
+    left: -50%;
+    border-radius: 0 0 3px 3px;
+  }
+
+  header > nav > div:first-of-type > div {
+    left: 0;
+    border-radius: 0 0 3px 0;
+  }
+
+  header > nav > div:last-of-type > div {
+    right: 0;
+    border-radius: 0 0 0 3px;
+  }
+
+  /*header > nav > div:hover > div {*/
+  /*  display: block;*/
+  /*}*/
+
+  header > nav > div > div > a {
+    display: block;
+    float: left;
+    padding: 8px 10px;
+    width: 46%;
+    margin: 2%;
+    text-align: center;
+    background-color: #f44355;
+    color: black;
+    border-radius: 2px;
+    transition: background-color 0.2s ease;
+  }
+
+  header > nav > div > div > a:hover {
+    background-color: #212121;
+    cursor: pointer;
+  }
+
+  h1 {
+    margin-top: 100px;
+    font-weight: 100;
+  }
+
+  p {
+    color: #aaa;
+    font-weight: 300;
+  }
+
+  @media (max-width:600px) {
+    header > nav > div > div > a {
+      margin: 5px 0;
+      width: 100%;
+    }
+    header > nav > div > a > span {
+      display: none;
+    }
+  }
+</style>
+{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="submit" form="form-module" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if error_warning %}
+    <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+      </div>
+      <div class="panel-body">
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-module" class="form-horizontal">
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-name">{{ entry_name }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="name" value="{{ name }}" placeholder="{{ entry_name }}" id="input-name" class="form-control" />
+              {% if error_name %}
+              <div class="text-danger">{{ error_name }}</div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-menu_type">{{ entry_menu_type }}</label>
+            <div class="col-sm-10">
+              <select name="menu_type" id="input-menu_type" class="form-control">
+                {% if menu_type %}
+                  <option value="0">{{ text_horizontal }}</option>
+                  <option value="1" selected="selected">{{ text_vertical }}</option>
+                {% else %}
+                  <option value="0" selected="selected">{{ text_horizontal }}</option>
+                  <option value="1">{{ text_vertical }}</option>
+                {% endif %}
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-width">{{ entry_menu_view }}</label>
+
+            <div id="horizontal_type_menu">
+              <div class="col-sm-10">
+                <div style="width: 100%; height: 350px; border: 1px solid #e3e3e3;">
+
+                  <header>
+                    <nav>
+                      <div>
+                        <a><span>Tab </span>1</a>
+                      </div>
+                      <div>
+                        <a class="horizontal-dropdown-item"><span>Tab </span>2</a>
+                        <div>
+                          <a>Link 1</a>
+                          <a>Link 2</a>
+                          <a>Link 3</a>
+                          <a>Link 4</a>
+                          <a>Link 5</a>
+                          <a>Link 6</a>
+                        </div>
+                      </div>
+                      <div>
+                        <a><span>Tab </span>3</a>
+                      </div>
+                      <div>
+                        <a class="horizontal-dropdown-item"><span>Tab </span>4</a>
+                        <div>
+                          <a>Link 1</a>
+                          <a>Link 2</a>
+                          <a>Link 3</a>
+                          <a>Link 4</a>
+                          <a>Link 5</a>
+                          <a>Link 6</a>
+                        </div>
+                      </div>
+                      <div>
+                        <a><span>Tab </span>5</a>
+                      </div>
+                    </nav>
+                  </header>
+
+                </div>
+              </div>
+            </div>
+
+            <div id="vertical_type_menu" style="display: none;">
+              <div class="col-sm-5">
+                <div style="width: 100%; border: 1px solid #e3e3e3;">
+                  <div class="sidenav">
+                    <span>Главная</span>
+                    <button type="button" class="dropdown-btn">
+                      Каталог товаров
+                      <i class="fa fa-caret-down"></i>
+                    </button>
+                    <div class="dropdown-container">
+                      <span>Строительные инструменты</span>
+                      <span>Чайная продукция</span>
+                    </div>
+                    <span>Ссылка на одноклассники</span>
+                    <button type="button" class="dropdown-btn">
+                      Статьи
+                      <i class="fa fa-caret-down"></i>
+                    </button>
+                    <div class="dropdown-container">
+                      <span>Статья 1</span>
+                      <span>Статья 2</span>
+                      <span>Статья 3</span>
+                    </div>
+                    <span>Контакты</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-sm-5">
+                <div style="width: 100%; border: 1px solid #e3e3e3;">
+                  Vertical
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+            <div class="col-sm-10">
+              <select name="status" id="input-status" class="form-control">
+                {% if status %}
+                <option value="1" selected="selected">{{ text_enabled }}</option>
+                <option value="0">{{ text_disabled }}</option>
+                {% else %}
+                <option value="1">{{ text_enabled }}</option>
+                <option value="0" selected="selected">{{ text_disabled }}</option>
+                {% endif %}
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+
+      //* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
+      var dropdown = document.getElementsByClassName("dropdown-btn");
+      var i;
+
+      for (i = 0; i < dropdown.length; i++) {
+          dropdown[i].addEventListener("click", function() {
+              this.classList.toggle("active");
+              var dropdownContent = this.nextElementSibling;
+              if (dropdownContent.style.display === "block") {
+                  dropdownContent.style.display = "none";
+              } else {
+                  dropdownContent.style.display = "block";
+              }
+          });
+      }
+
+      var dropdown = document.getElementsByClassName("dropdown-btn");
+      var j;
+
+      for (j = 0; j < dropdown.length; j++) {
+          dropdown[j].addEventListener("click", function() {
+              this.classList.toggle("active");
+              var dropdownContent = this.nextElementSibling;
+              if (dropdownContent.style.display === "block") {
+                  dropdownContent.style.display = "none";
+              } else {
+                  dropdownContent.style.display = "block";
+              }
+          });
+      }
+
+    $(document).ready(function () {
+      if($('#input-menu_type').val() === '0') {
+          $('#horizontal_type_menu').show();
+          $('#vertical_type_menu').hide();
+      } else {
+          $('#horizontal_type_menu').hide();
+          $('#vertical_type_menu').show();
+      }
+
+      $('#input-menu_type').on('change', function () {
+        if($(this).val() === '0') {
+          $('#horizontal_type_menu').show();
+          $('#vertical_type_menu').hide();
+        } else {
+            $('#horizontal_type_menu').hide();
+            $('#vertical_type_menu').show();
+        }
+      })
+    })
+  </script>
+</div>
+{{ footer }}
