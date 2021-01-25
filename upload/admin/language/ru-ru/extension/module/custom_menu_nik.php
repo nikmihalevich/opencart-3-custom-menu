@@ -1,6 +1,6 @@
 <?php
 // Heading
-$_['heading_title']    = 'Mеню';
+$_['heading_title']    = 'Kонструктор меню';
 
 // Text
 $_['text_extension']   = 'Расширения';

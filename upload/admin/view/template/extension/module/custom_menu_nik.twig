@@ -3,7 +3,7 @@
   .sidenav {
     height: 100%;
     z-index: 1;
-    padding-top: 20px;
+    margin-bottom: 80px;
   }
 
   .sidenav span, .dropdown-btn {
@@ -21,6 +21,28 @@
     width: -webkit-fill-available;
   }
 
+  .sidenav-other {
+    height: 100%;
+    width: 50%;
+    z-index: 1;
+    position: relative;
+  }
+
+  .sidenav-other span, .dropdown-btn-other {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 20px;
+    color: black;
+    display: block;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+    outline: none;
+    border: 1px solid #e3e3e3;
+    margin: 5px;
+    width: 290px;
+  }
+
   .main {
     margin-left: 200px;
     font-size: 20px;
@@ -33,111 +55,98 @@
 
   .dropdown-container {
     display: none;
-    padding-left: 50px;
   }
 
-  .fa-caret-down {
-    float: right;
-    padding-right: 8px;
-  }
-
-
-
-  header {
-    width: 100%;
-    height: 50px;
-  }
-
-  header > nav > div {
-    float: left;
-    width: 19.2%;
-    height: 100%;
-    position: relative;
-    border: 1px solid #e3e3e3;
-    margin: 5px;
-  }
-
-  header > nav > div > a {
-    text-align: center;
-    width: 100%;
-    height: 100%;
-    display: block;
-    line-height: 50px;
-    color: black;
-    transition: background-color 0.2s ease;
-    text-transform: uppercase;
-  }
-
-  header > nav > div:hover > a {
-    background-color: rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-  }
-
-  header > nav > div > div {
+  .sidenav-other .dropdown-container {
     display: none;
-    overflow: hidden;
-    background-color: white;
-    min-width: 200%;
     position: absolute;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
-    padding: 10px;
+    left: 100%;
+    border: 1px solid #e3e3e3;
+    width: 97%;
+    padding: 5px;
   }
 
-  header > nav > div:not(:first-of-type):not(:last-of-type) > div {
-    left: -50%;
-    border-radius: 0 0 3px 3px;
+  .sidenav-other .dropdown-container div {
+    height: 70px;
+    padding: 3px;
   }
 
-  header > nav > div:first-of-type > div {
-    left: 0;
-    border-radius: 0 0 3px 0;
-  }
-
-  header > nav > div:last-of-type > div {
-    right: 0;
-    border-radius: 0 0 0 3px;
-  }
-
-  /*header > nav > div:hover > div {*/
-  /*  display: block;*/
-  /*}*/
-
-  header > nav > div > div > a {
-    display: block;
-    float: left;
-    padding: 8px 10px;
-    width: 46%;
-    margin: 2%;
-    text-align: center;
-    background-color: #f44355;
+  .sidenav-other .dropdown-container div a {
     color: black;
-    border-radius: 2px;
-    transition: background-color 0.2s ease;
+    border: 1px solid #e3e3e3;
+    display: block;
+    height: 100%;
+    margin: 0;
   }
 
-  header > nav > div > div > a:hover {
-    background-color: #212121;
-    cursor: pointer;
+  <!-- ----------------- HORIZONTAL MENU -------------------------- -->
+
+  .horizontal-menu {
+    width: 100%;
+    margin: 0 auto 30px;
+  }
+  .horizontal-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .topmenu {
+    position: relative;
+  }
+  .topmenu > li {
+    display: inline-block;
+    position: static;
+  }
+  .topmenu > li:last-child {
+    margin-right: 0;
+  }
+  .horizontal-menu a {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    outline: none;
+    transition: .5s linear;
+  }
+  .horizontal-menu .fa {
+    color: inherit;
+    padding-left: 10px;
+  }
+  .submenu {
+    position: absolute;
+    top: 115%;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+    -webkit-transition: 0.5s ease-in-out;
+    -moz-transition: 0.5s ease-in-out;
+    -o-transition: 0.5s ease-in-out;
+    transition: 0.5s ease-in-out;
+    background-color: #e6e6e6;
+  }
+  .submenu > li > a {
+    background-color: #fff;
+    height: 100px;
+  }
+  .horizontal-menu .topmenu li {
+    border: 1px solid #e3e3e3;
+    padding: 0 60px;
+  }
+  .horizontal-menu ul a {
+    color: #695753;
+  }
+  .horizontal-menu .submenu li {
+    padding: 3px 7px;
+    border: none;
   }
 
-  h1 {
-    margin-top: 100px;
-    font-weight: 100;
-  }
-
-  p {
-    color: #aaa;
-    font-weight: 300;
-  }
-
-  @media (max-width:600px) {
-    header > nav > div > div > a {
-      margin: 5px 0;
-      width: 100%;
-    }
-    header > nav > div > a > span {
-      display: none;
-    }
+  .select-view-btn {
+    bottom: 5%;
+    position: absolute;
+    left: 40%;
+    padding: 6px 40px;
+    background-color: #4DD9FF;
+    color: white;
+    border: none;
   }
 </style>
 {{ column_left }}
@@ -193,58 +202,156 @@
           <div class="form-group">
             <label class="col-sm-2 control-label" for="input-width">{{ entry_menu_view }}</label>
 
+            <select name="type_menu" style="display: none" id="select-type_menu">
+              <option value="0"></option>
+              <option value="1"></option>
+              <option value="2"></option>
+            </select>
+
             <div id="horizontal_type_menu">
               <div class="col-sm-10">
-                <div style="width: 100%; height: 350px; border: 1px solid #e3e3e3;">
-
-                  <header>
-                    <nav>
-                      <div>
-                        <a><span>Tab </span>1</a>
-                      </div>
-                      <div>
-                        <a class="horizontal-dropdown-item"><span>Tab </span>2</a>
-                        <div>
-                          <a>Link 1</a>
-                          <a>Link 2</a>
-                          <a>Link 3</a>
-                          <a>Link 4</a>
-                          <a>Link 5</a>
-                          <a>Link 6</a>
-                        </div>
-                      </div>
-                      <div>
-                        <a><span>Tab </span>3</a>
-                      </div>
-                      <div>
-                        <a class="horizontal-dropdown-item"><span>Tab </span>4</a>
-                        <div>
-                          <a>Link 1</a>
-                          <a>Link 2</a>
-                          <a>Link 3</a>
-                          <a>Link 4</a>
-                          <a>Link 5</a>
-                          <a>Link 6</a>
-                        </div>
-                      </div>
-                      <div>
-                        <a><span>Tab </span>5</a>
-                      </div>
-                    </nav>
-                  </header>
-
+                <div style="width: 100%; border: 1px solid #e3e3e3; height: 350px;">
+                  <nav class="horizontal-menu">
+                    <ul class="topmenu">
+                      <li><a href="#">Главная</a></li>
+                      <li><a href="#">Каталог товаров <i class="fa fa-angle-down"></i></a>
+                        <ul class="submenu">
+                          <li class="col-sm-3">
+                            <a href="">
+                              Вложенный блок
+                              <br>
+                              Можно поместить либо меню, либо модуль
+                            </a>
+                          </li>
+                          <li class="col-sm-3">
+                            <a href="">
+                              Вложенный блок
+                              <br>
+                              Можно поместить либо меню, либо модуль
+                            </a>
+                          </li>
+                          <li class="col-sm-3">
+                            <a href="">
+                              Вложенный блок
+                              <br>
+                              Можно поместить либо меню, либо модуль
+                            </a>
+                          </li>
+                          <li class="col-sm-3">
+                            <a href="">
+                              Вложенный блок
+                              <br>
+                              Можно поместить либо меню, либо модуль
+                            </a>
+                          </li>
+                          <li class="col-sm-3">
+                            <a href="">
+                              Вложенный блок
+                              <br>
+                              Можно поместить либо меню, либо модуль
+                            </a>
+                          </li>
+                          <li class="col-sm-3">
+                            <a href="">
+                              Вложенный блок
+                              <br>
+                              Можно поместить либо меню, либо модуль
+                            </a>
+                          </li>
+                          <li class="col-sm-3">
+                            <a href="">
+                              Вложенный блок
+                              <br>
+                              Можно поместить либо меню, либо модуль
+                            </a>
+                          </li>
+                          <li class="col-sm-3">
+                            <a href="">
+                              Вложенный блок
+                              <br>
+                              Можно поместить либо меню, либо модуль
+                            </a>
+                          </li>
+                        </ul>
+                      </li>
+                      <li><a href="#">Ссылка на одноклассники</a></li>
+                      <li><a href="#">Статьи <i class="fa fa-angle-down"></i></a>
+                        <ul class="submenu">
+                          <li class="col-sm-3">
+                            <a href="">
+                              Вложенный блок
+                              <br>
+                              Можно поместить либо меню, либо модуль
+                            </a>
+                          </li>
+                          <li class="col-sm-3">
+                            <a href="">
+                              Вложенный блок
+                              <br>
+                              Можно поместить либо меню, либо модуль
+                            </a>
+                          </li>
+                          <li class="col-sm-3">
+                            <a href="">
+                              Вложенный блок
+                              <br>
+                              Можно поместить либо меню, либо модуль
+                            </a>
+                          </li>
+                          <li class="col-sm-3">
+                            <a href="">
+                              Вложенный блок
+                              <br>
+                              Можно поместить либо меню, либо модуль
+                            </a>
+                          </li>
+                          <li class="col-sm-3">
+                            <a href="">
+                              Вложенный блок
+                              <br>
+                              Можно поместить либо меню, либо модуль
+                            </a>
+                          </li>
+                          <li class="col-sm-3">
+                            <a href="">
+                              Вложенный блок
+                              <br>
+                              Можно поместить либо меню, либо модуль
+                            </a>
+                          </li>
+                          <li class="col-sm-3">
+                            <a href="">
+                              Вложенный блок
+                              <br>
+                              Можно поместить либо меню, либо модуль
+                            </a>
+                          </li>
+                          <li class="col-sm-3">
+                            <a href="">
+                              Вложенный блок
+                              <br>
+                              Можно поместить либо меню, либо модуль
+                            </a>
+                          </li>
+                        </ul>
+                      </li>
+                      <li><a href="#">Контакты</a></li>
+                    </ul>
+                  </nav>
+                  <button type="button" class="select-view-btn" id="select_horizontal_menu">Выбрать вид</button>
                 </div>
               </div>
             </div>
 
+
             <div id="vertical_type_menu" style="display: none;">
               <div class="col-sm-5">
-                <div style="width: 100%; border: 1px solid #e3e3e3;">
+                <div style="width: 100%; border: 1px solid #e3e3e3; min-height: 350px; height: 100%;">
                   <div class="sidenav">
                     <span>Главная</span>
                     <button type="button" class="dropdown-btn">
                       Каталог товаров
-                      <i class="fa fa-caret-down"></i>
+                      <i class="fa fa-caret-down pull-right"></i>
                     </button>
                     <div class="dropdown-container">
                       <span>Строительные инструменты</span>
@@ -253,7 +360,7 @@
                     <span>Ссылка на одноклассники</span>
                     <button type="button" class="dropdown-btn">
                       Статьи
-                      <i class="fa fa-caret-down"></i>
+                      <i class="fa fa-caret-down pull-right"></i>
                     </button>
                     <div class="dropdown-container">
                       <span>Статья 1</span>
@@ -262,12 +369,66 @@
                     </div>
                     <span>Контакты</span>
                   </div>
+                  <button type="button" class="select-view-btn" id="select_vertical_menu_1">Выбрать вид</button>
                 </div>
               </div>
 
               <div class="col-sm-5">
-                <div style="width: 100%; border: 1px solid #e3e3e3;">
-                  Vertical
+                <div style="width: 100%; border: 1px solid #e3e3e3; height: 350px;">
+                  <div class="sidenav-other">
+                    <span>Главная</span>
+                    <button type="button" class="dropdown-btn-other">
+                      Каталог товаров
+                      <i class="fa fa-caret-right pull-right"></i>
+                    </button>
+                    <div class="dropdown-container" style="top: 42px;">
+                      <div class="col-sm-4">
+                        <a href="#">Вложенный блок</a>
+                      </div>
+                      <div class="col-sm-4">
+                        <a href="#">Вложенный блок</a>
+                      </div>
+                      <div class="col-sm-4">
+                        <a href="#">Вложенный блок</a>
+                      </div>
+                      <div class="col-sm-4">
+                        <a href="#">Вложенный блок</a>
+                      </div>
+                      <div class="col-sm-4">
+                        <a href="#">Вложенный блок</a>
+                      </div>
+                      <div class="col-sm-4">
+                        <a href="#">Вложенный блок</a>
+                      </div>
+                    </div>
+                    <span>Ссылка на одноклассники</span>
+                    <button type="button" class="dropdown-btn-other">
+                      Статьи
+                      <i class="fa fa-caret-right pull-right"></i>
+                    </button>
+                    <div class="dropdown-container" style="top: 84px;">
+                      <div class="col-sm-4">
+                        <a href="#">Вложенный блок</a>
+                      </div>
+                      <div class="col-sm-4">
+                        <a href="#">Вложенный блок</a>
+                      </div>
+                      <div class="col-sm-4">
+                        <a href="#">Вложенный блок</a>
+                      </div>
+                      <div class="col-sm-4">
+                        <a href="#">Вложенный блок</a>
+                      </div>
+                      <div class="col-sm-4">
+                        <a href="#">Вложенный блок</a>
+                      </div>
+                      <div class="col-sm-4">
+                        <a href="#">Вложенный блок</a>
+                      </div>
+                    </div>
+                    <span>Контакты</span>
+                  </div>
+                  <button type="button" class="select-view-btn" id="select_vertical_menu_2">Выбрать вид</button>
                 </div>
               </div>
             </div>
@@ -293,36 +454,66 @@
   </div>
   <script type="text/javascript">
 
-      //* Loop through all dropdown buttons to toggle between hiding and showing its dropdown content - This allows the user to have multiple dropdowns without any conflict */
-      var dropdown = document.getElementsByClassName("dropdown-btn");
-      var i;
-
-      for (i = 0; i < dropdown.length; i++) {
-          dropdown[i].addEventListener("click", function() {
-              this.classList.toggle("active");
-              var dropdownContent = this.nextElementSibling;
-              if (dropdownContent.style.display === "block") {
-                  dropdownContent.style.display = "none";
-              } else {
-                  dropdownContent.style.display = "block";
+      $(".horizontal-menu li ul").hide(); // скрываем выпадающее меню
+      $(".horizontal-menu li:has('.submenu')").on('click', function(e){
+          e.preventDefault();
+          let submenus = $('.submenu');
+          for (let t = 0; t < submenus.length; t++) {
+              if($(this).find('ul.submenu')[0] !== submenus[t]) {
+                  submenus[t].style.display = 'none';
+                  submenus[t].parentNode.classList.remove('active')
               }
-          });
-      }
+          }
+          $(this).toggleClass('active')
+          $(this).find('ul.submenu').toggle();
 
-      var dropdown = document.getElementsByClassName("dropdown-btn");
-      var j;
+      } /* отбираем элемент списка, который содержит элемент с классом .submenu и добавляем ему функцию при наведении, которая показывает и скрывает выпадающее меню */
+      );
 
-      for (j = 0; j < dropdown.length; j++) {
-          dropdown[j].addEventListener("click", function() {
-              this.classList.toggle("active");
-              var dropdownContent = this.nextElementSibling;
-              if (dropdownContent.style.display === "block") {
-                  dropdownContent.style.display = "none";
-              } else {
-                  dropdownContent.style.display = "block";
-              }
-          });
-      }
+    var dropdown = document.getElementsByClassName("dropdown-btn");
+    var i;
+
+    for (i = 0; i < dropdown.length; i++) {
+        dropdown[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var dropdownContent = this.nextElementSibling;
+            if (dropdownContent.style.display === "block") {
+                dropdownContent.style.display = "none";
+            } else {
+                dropdownContent.style.display = "block";
+            }
+        });
+    }
+
+    var dropdownOther = document.getElementsByClassName("dropdown-btn-other");
+    var j;
+
+    for (j = 0; j < dropdownOther.length; j++) {
+        let temp = j;
+        dropdownOther[j].addEventListener("click", function() {
+            this.classList.toggle("active");
+
+            var dropdownContent = this.nextElementSibling;
+            if (dropdownContent.style.display === "block") {
+                dropdownContent.style.display = "none";
+            } else {
+                dropdownContent.style.display = "block";
+                for (let q = 0; q < dropdownOther.length; q++) {
+                    if (q !== temp) {
+                        let a = dropdownOther[q].nextElementSibling
+                        let b = dropdownOther[q]
+                        b.classList.remove('active')
+                        a.style.display = 'none';
+
+                    }
+                }
+            }
+        });
+    }
+
+    $('.dropdown-container a, .topmenu li a').on('click', function (e) {
+        e.preventDefault();
+    })
 
     $(document).ready(function () {
       if($('#input-menu_type').val() === '0') {
@@ -342,7 +533,21 @@
             $('#vertical_type_menu').show();
         }
       })
-    })
+
+      $('#select_horizontal_menu').on('click', function () {
+          $('select[name="type_menu"] option[value="0"]').prop('selected', 'selected')
+      })
+
+      $('#select_vertical_menu_1').on('click', function () {
+          $('select[name="type_menu"] option[value="1"]').prop('selected', 'selected')
+      })
+
+      $('#select_vertical_menu_2').on('click', function () {
+          $('select[name="type_menu"] option[value="2"]').prop('selected', 'selected')
+      })
+
+})
+
   </script>
 </div>
 {{ footer }}
