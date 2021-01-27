@@ -21,78 +21,191 @@ class ControllerExtensionModuleCustomMenuNik extends Controller {
 			$this->response->redirect($this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=module', true));
 		}
 
-		if (isset($this->error['warning'])) {
-			$data['error_warning'] = $this->error['warning'];
-		} else {
-			$data['error_warning'] = '';
-		}
-
-		if (isset($this->error['name'])) {
-			$data['error_name'] = $this->error['name'];
-		} else {
-			$data['error_name'] = '';
-		}
-
-		$data['breadcrumbs'] = array();
-
-		$data['breadcrumbs'][] = array(
-			'text' => $this->language->get('text_home'),
-			'href' => $this->url->link('common/dashboard', 'user_token=' . $this->session->data['user_token'], true)
-		);
-
-		$data['breadcrumbs'][] = array(
-			'text' => $this->language->get('text_extension'),
-			'href' => $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=module', true)
-		);
-
-		if (!isset($this->request->get['module_id'])) {
-			$data['breadcrumbs'][] = array(
-				'text' => $this->language->get('heading_title'),
-				'href' => $this->url->link('extension/module/custom_menu_nik', 'user_token=' . $this->session->data['user_token'], true)
-			);
-		} else {
-			$data['breadcrumbs'][] = array(
-				'text' => $this->language->get('heading_title'),
-				'href' => $this->url->link('extension/module/custom_menu_nik', 'user_token=' . $this->session->data['user_token'] . '&module_id=' . $this->request->get['module_id'], true)
-			);
-		}
-
-		if (!isset($this->request->get['module_id'])) {
-			$data['action'] = $this->url->link('extension/module/custom_menu_nik', 'user_token=' . $this->session->data['user_token'], true);
-		} else {
-			$data['action'] = $this->url->link('extension/module/custom_menu_nik', 'user_token=' . $this->session->data['user_token'] . '&module_id=' . $this->request->get['module_id'], true);
-		}
-
-		$data['cancel'] = $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=module', true);
-
-		if (isset($this->request->get['module_id']) && ($this->request->server['REQUEST_METHOD'] != 'POST')) {
-			$module_info = $this->model_setting_module->getModule($this->request->get['module_id']);
-		}
-
-		$data['user_token'] = $this->session->data['user_token'];
-
-		if (isset($this->request->post['name'])) {
-			$data['name'] = $this->request->post['name'];
-		} elseif (!empty($module_info)) {
-			$data['name'] = $module_info['name'];
-		} else {
-			$data['name'] = '';
-		}
-
-		if (isset($this->request->post['status'])) {
-			$data['status'] = $this->request->post['status'];
-		} elseif (!empty($module_info)) {
-			$data['status'] = $module_info['status'];
-		} else {
-			$data['status'] = '';
-		}
-
-		$data['header'] = $this->load->controller('common/header');
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['footer'] = $this->load->controller('common/footer');
-
-		$this->response->setOutput($this->load->view('extension/module/custom_menu_nik', $data));
+		if(!isset($this->request->get['module_id'])) {
+            $this->getView('add');
+        } else {
+		    $this->getView('edit');
+        }
 	}
+	
+	private function getView($type) {
+	    if ($type == 'add') {
+            if (isset($this->error['warning'])) {
+                $data['error_warning'] = $this->error['warning'];
+            } else {
+                $data['error_warning'] = '';
+            }
+
+            if (isset($this->error['name'])) {
+                $data['error_name'] = $this->error['name'];
+            } else {
+                $data['error_name'] = '';
+            }
+
+            $data['breadcrumbs'] = array();
+
+            $data['breadcrumbs'][] = array(
+                'text' => $this->language->get('text_home'),
+                'href' => $this->url->link('common/dashboard', 'user_token=' . $this->session->data['user_token'], true)
+            );
+
+            $data['breadcrumbs'][] = array(
+                'text' => $this->language->get('text_extension'),
+                'href' => $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=module', true)
+            );
+
+            if (!isset($this->request->get['module_id'])) {
+                $data['breadcrumbs'][] = array(
+                    'text' => $this->language->get('heading_title'),
+                    'href' => $this->url->link('extension/module/custom_menu_nik', 'user_token=' . $this->session->data['user_token'], true)
+                );
+            } else {
+                $data['breadcrumbs'][] = array(
+                    'text' => $this->language->get('heading_title'),
+                    'href' => $this->url->link('extension/module/custom_menu_nik', 'user_token=' . $this->session->data['user_token'] . '&module_id=' . $this->request->get['module_id'], true)
+                );
+            }
+
+            if (!isset($this->request->get['module_id'])) {
+                $data['action'] = $this->url->link('extension/module/custom_menu_nik', 'user_token=' . $this->session->data['user_token'], true);
+            } else {
+                $data['action'] = $this->url->link('extension/module/custom_menu_nik', 'user_token=' . $this->session->data['user_token'] . '&module_id=' . $this->request->get['module_id'], true);
+            }
+
+            $data['cancel'] = $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=module', true);
+
+            if (isset($this->request->get['module_id']) && ($this->request->server['REQUEST_METHOD'] != 'POST')) {
+                $module_info = $this->model_setting_module->getModule($this->request->get['module_id']);
+            }
+
+            $data['user_token'] = $this->session->data['user_token'];
+
+            if (isset($this->request->post['name'])) {
+                $data['name'] = $this->request->post['name'];
+            } elseif (!empty($module_info)) {
+                $data['name'] = $module_info['name'];
+            } else {
+                $data['name'] = '';
+            }
+
+            if (isset($this->request->post['status'])) {
+                $data['status'] = $this->request->post['status'];
+            } elseif (!empty($module_info)) {
+                $data['status'] = $module_info['status'];
+            } else {
+                $data['status'] = '';
+            }
+
+            $data['header'] = $this->load->controller('common/header');
+            $data['column_left'] = $this->load->controller('common/column_left');
+            $data['footer'] = $this->load->controller('common/footer');
+
+            $this->response->setOutput($this->load->view('extension/module/custom_menu_add_nik', $data));
+        } else {
+            if (isset($this->error['warning'])) {
+                $data['error_warning'] = $this->error['warning'];
+            } else {
+                $data['error_warning'] = '';
+            }
+
+            if (isset($this->error['name'])) {
+                $data['error_name'] = $this->error['name'];
+            } else {
+                $data['error_name'] = '';
+            }
+
+            $data['breadcrumbs'] = array();
+
+            $data['breadcrumbs'][] = array(
+                'text' => $this->language->get('text_home'),
+                'href' => $this->url->link('common/dashboard', 'user_token=' . $this->session->data['user_token'], true)
+            );
+
+            $data['breadcrumbs'][] = array(
+                'text' => $this->language->get('text_extension'),
+                'href' => $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=module', true)
+            );
+
+            if (!isset($this->request->get['module_id'])) {
+                $data['breadcrumbs'][] = array(
+                    'text' => $this->language->get('heading_title'),
+                    'href' => $this->url->link('extension/module/custom_menu_nik', 'user_token=' . $this->session->data['user_token'], true)
+                );
+            } else {
+                $data['breadcrumbs'][] = array(
+                    'text' => $this->language->get('heading_title'),
+                    'href' => $this->url->link('extension/module/custom_menu_nik', 'user_token=' . $this->session->data['user_token'] . '&module_id=' . $this->request->get['module_id'], true)
+                );
+            }
+
+            if (!isset($this->request->get['module_id'])) {
+                $data['action'] = $this->url->link('extension/module/custom_menu_nik', 'user_token=' . $this->session->data['user_token'], true);
+            } else {
+                $data['action'] = $this->url->link('extension/module/custom_menu_nik', 'user_token=' . $this->session->data['user_token'] . '&module_id=' . $this->request->get['module_id'], true);
+            }
+
+            $data['cancel'] = $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=module', true);
+
+            if (isset($this->request->get['module_id']) && ($this->request->server['REQUEST_METHOD'] != 'POST')) {
+                $module_info = $this->model_setting_module->getModule($this->request->get['module_id']);
+            }
+
+            $data['user_token'] = $this->session->data['user_token'];
+
+            $this->load->model('localisation/language');
+
+            $data['languages'] = $this->model_localisation_language->getLanguages();
+
+            // Image
+            if (isset($this->request->post['image'])) {
+                $data['image'] = $this->request->post['image'];
+            } elseif (!empty($module_info) && isset($module_info['image'])) {
+                $data['image'] = $module_info['image'];
+            } else {
+                $data['image'] = '';
+            }
+
+            $this->load->model('tool/image');
+
+            if (isset($this->request->post['image']) && is_file(DIR_IMAGE . $this->request->post['image'])) {
+                $data['thumb'] = $this->model_tool_image->resize($this->request->post['image'], 100, 100);
+            } elseif (!empty($module_info) && isset($module_info['image']) && is_file(DIR_IMAGE . $module_info['image'])) {
+                $data['thumb'] = $this->model_tool_image->resize($module_info['image'], 100, 100);
+            } else {
+                $data['thumb'] = $this->model_tool_image->resize('no_image.png', 100, 100);
+            }
+
+            $data['placeholder'] = $this->model_tool_image->resize('no_image.png', 100, 100);
+
+            if (isset($this->request->post['name'])) {
+                $data['name'] = $this->request->post['name'];
+            } elseif (!empty($module_info)) {
+                $data['name'] = $module_info['name'];
+            } else {
+                $data['name'] = '';
+            }
+
+            if (!empty($module_info)) {
+                $data['menu_type'] = $module_info['menu_type'];
+            } else {
+                $data['menu_type'] = '';
+            }
+
+            if (isset($this->request->post['status'])) {
+                $data['status'] = $this->request->post['status'];
+            } elseif (!empty($module_info)) {
+                $data['status'] = $module_info['status'];
+            } else {
+                $data['status'] = '';
+            }
+
+            $data['header'] = $this->load->controller('common/header');
+            $data['column_left'] = $this->load->controller('common/column_left');
+            $data['footer'] = $this->load->controller('common/footer');
+
+            $this->response->setOutput($this->load->view('extension/module/custom_menu_edit_nik', $data));
+        }
+    }
 
 	protected function validate() {
 		if (!$this->user->hasPermission('modify', 'extension/module/custom_menu_nik')) {

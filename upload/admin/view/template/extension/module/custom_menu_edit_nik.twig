@@ -1,0 +1,260 @@
+{{ header }}
+<style>
+  .create-menu-item-btn {
+    padding: 6px 40px;
+    background-color: #4DD9FF;
+    color: white;
+    border: none;
+    font-size: 16px;
+  }
+  .menu-list {
+    list-style-type: none;
+    padding: 0;
+    font-size: 15px;
+  }
+  .menu-list-item {
+    padding: 10px;
+    border: 1px solid #e3e3e3;
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .menu-list-item__inner {
+
+  }
+  .menu-item-inner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border: 1px solid #e3e3e3;
+    margin-bottom: 10px;
+  }
+  .menu-item-inner button {
+    margin: 15px;
+    padding: 6px;
+    width: 80%;
+  }
+</style>
+{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="submit" form="form-module" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if error_warning %}
+    <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+      </div>
+      <div class="panel-body">
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-module" class="form-horizontal">
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-name">{{ entry_name }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="name" value="{{ name }}" placeholder="{{ entry_name }}" id="input-name" class="form-control" />
+              {% if error_name %}
+              <div class="text-danger">{{ error_name }}</div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-3">
+              <div class="menu-block">
+                <button type="button" class="create-menu-item-btn">Создать пункт меню</button>
+                <ul class="menu-list">
+                  <li class="menu-list-item">
+                    <span class="menu-list-item__inner">{{ text_main }}</span>
+                    <div>
+                      <button type="button" class="btn btn-primary"><i class="fa fa-pencil"></i></button>
+                      <button type="button" class="btn btn-danger"><i class="fa fa-trash"></i></button>
+                    </div>
+                  </li>
+                  <li class="menu-list-item">
+                    <span class="menu-list-item__inner">{{ text_main }}</span>
+                    <div>
+                      <button type="button" class="btn btn-primary"><i class="fa fa-pencil"></i></button>
+                      <button type="button" class="btn btn-danger"><i class="fa fa-trash"></i></button>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-sm-9">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title">Настройки пункта меню</h4>
+                </div>
+                <div class="panel-body">
+
+                  <ul class="nav nav-tabs" id="language">
+                    {% for language in languages %}
+                      <li><a href="#language{{ language.language_id }}" data-toggle="tab"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}"/> {{ language.name }}</a></li>
+                    {% endfor %}
+                  </ul>
+                  <div class="tab-content">
+                    {% for language in languages %}
+                      <div class="tab-pane" id="language{{ language.language_id }}">
+                        <div class="form-group">
+                          <label class="col-sm-2 control-label" for="input-name{{ language.language_id }}">{{ entry_parent_item }}</label>
+                          <div class="col-sm-10">
+                            <select name="menu_type" id="input-menu_type" class="form-control">
+                              <option value="0">{{ text_no }}</option>
+                              {% if menu_items %}
+                                {% for menu_item in menu_items %}
+                                  <option value="{{ menu_item['id'] }}">{{ menu_item['name'] }}</option>
+                                {% endfor %}
+                              {% endif %}
+                            </select>
+                          </div>
+                        </div>
+                        <div class="form-group required">
+                          <label class="col-sm-2 control-label" for="input-name{{ language.language_id }}">{{ entry_name_item }}</label>
+                          <div class="col-sm-10">
+                            <input type="text" name="product_description[{{ language.language_id }}][name]" value="{{ product_description[language.language_id] ? product_description[language.language_id].name }}" placeholder="{{ entry_name_item }}" id="input-name{{ language.language_id }}" class="form-control"/>
+                            {% if error_name[language.language_id] %}
+                              <div class="text-danger">{{ error_name[language.language_id] }}</div>
+                            {% endif %}
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="col-sm-2 control-label" for="input-meta-title{{ language.language_id }}">{{ entry_link }}</label>
+                          <div class="col-sm-10">
+                            <input type="text" name="product_description[{{ language.language_id }}][meta_title]" value="{{ product_description[language.language_id] ? product_description[language.language_id].meta_title }}" placeholder="{{ entry_link }}" id="input-meta-title{{ language.language_id }}" class="form-control"/>
+                            {% if error_meta_title[language.language_id] %}
+                              <div class="text-danger">{{ error_meta_title[language.language_id] }}</div>
+                            {% endif %}
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="col-sm-2 control-label" for="input-meta-title{{ language.language_id }}">{{ entry_class_item }}</label>
+                          <div class="col-sm-10">
+                            <input type="text" name="product_description[{{ language.language_id }}][meta_title]" value="{{ product_description[language.language_id] ? product_description[language.language_id].meta_title }}" placeholder="{{ entry_class_item }}" id="input-meta-title{{ language.language_id }}" class="form-control"/>
+                            {% if error_meta_title[language.language_id] %}
+                              <div class="text-danger">{{ error_meta_title[language.language_id] }}</div>
+                            {% endif %}
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label class="col-sm-2 control-label" for="input-meta-title{{ language.language_id }}">{{ entry_img_item }}</label>
+                          <div class="col-sm-10">
+                            <a href="" id="thumb-image" data-toggle="image" class="img-thumbnail"><img src="{{ thumb }}" alt="" title="" data-placeholder="{{ placeholder }}"/></a> <input type="hidden" name="image" value="{{ image }}" id="input-image"/>
+                          </div>
+                        </div>
+
+                      </div>
+                    {% endfor %}
+                  </div>
+
+                </div>
+              </div>
+
+              {% if menu_type != '1' %}
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title">Вложение пункта меню</h4>
+                </div>
+                <div class="panel-body">
+
+
+                  <div class="tab-content">
+                    <div class="col-sm-3">
+                      <div class="menu-item-inner">
+                        <button type="button" class="create-menu-item-btn">{{ button_add_menu }}</button>
+                        <button type="button" class="create-menu-item-btn">{{ button_add_module }}</button>
+                      </div>
+                    </div>
+                    <div class="col-sm-3">
+                      <div class="menu-item-inner">
+                        <button type="button" class="create-menu-item-btn">{{ button_add_menu }}</button>
+                        <button type="button" class="create-menu-item-btn">{{ button_add_module }}</button>
+                      </div>
+                    </div>
+                    <div class="col-sm-3">
+                      <div class="menu-item-inner">
+                        <button type="button" class="create-menu-item-btn">{{ button_add_menu }}</button>
+                        <button type="button" class="create-menu-item-btn">{{ button_add_module }}</button>
+                      </div>
+                    </div>
+                    <div class="col-sm-3">
+                      <div class="menu-item-inner">
+                        <button type="button" class="create-menu-item-btn">{{ button_add_menu }}</button>
+                        <button type="button" class="create-menu-item-btn">{{ button_add_module }}</button>
+                      </div>
+                    </div>
+                    <div class="col-sm-3">
+                      <div class="menu-item-inner">
+                        <button type="button" class="create-menu-item-btn">{{ button_add_menu }}</button>
+                        <button type="button" class="create-menu-item-btn">{{ button_add_module }}</button>
+                      </div>
+                    </div>
+                    <div class="col-sm-3">
+                      <div class="menu-item-inner">
+                        <button type="button" class="create-menu-item-btn">{{ button_add_menu }}</button>
+                        <button type="button" class="create-menu-item-btn">{{ button_add_module }}</button>
+                      </div>
+                    </div>
+                    <div class="col-sm-3">
+                      <div class="menu-item-inner">
+                        <button type="button" class="create-menu-item-btn">{{ button_add_menu }}</button>
+                        <button type="button" class="create-menu-item-btn">{{ button_add_module }}</button>
+                      </div>
+                    </div>
+                    <div class="col-sm-3">
+                      <div class="menu-item-inner">
+                        <button type="button" class="create-menu-item-btn">{{ button_add_menu }}</button>
+                        <button type="button" class="create-menu-item-btn">{{ button_add_module }}</button>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+              {% endif %}
+
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+            <div class="col-sm-10">
+              <select name="status" id="input-status" class="form-control">
+                {% if status %}
+                <option value="1" selected="selected">{{ text_enabled }}</option>
+                <option value="0">{{ text_disabled }}</option>
+                {% else %}
+                <option value="1">{{ text_enabled }}</option>
+                <option value="0" selected="selected">{{ text_disabled }}</option>
+                {% endif %}
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+
+
+  </script>
+  <script type="text/javascript"><!--
+      $('#language a:first').tab('show');
+      $('#option a:first').tab('show');
+  //--></script>
+</div>
+{{ footer }}

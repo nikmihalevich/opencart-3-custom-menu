@@ -53,8 +53,9 @@
     background-color: #EEEEEE;
   }
 
-  .dropdown-container {
+  .sidenav .dropdown-container {
     display: none;
+    margin-left: 40px;
   }
 
   .sidenav-other .dropdown-container {
@@ -213,132 +214,132 @@
                 <div style="width: 100%; border: 1px solid #e3e3e3; height: 350px;">
                   <nav class="horizontal-menu">
                     <ul class="topmenu">
-                      <li><a href="#">Главная</a></li>
-                      <li><a href="#">Каталог товаров <i class="fa fa-angle-down"></i></a>
+                      <li><a href="#">{{ text_main }}</a></li>
+                      <li><a href="#">{{ text_product_catalog }} <i class="fa fa-angle-down"></i></a>
                         <ul class="submenu">
                           <li class="col-sm-3">
                             <a href="">
-                              Вложенный блок
+                              {{ text_inner_block }}
                               <br>
-                              Можно поместить либо меню, либо модуль
+                              {{ help_menu_item }}
                             </a>
                           </li>
                           <li class="col-sm-3">
                             <a href="">
-                              Вложенный блок
+                              {{ text_inner_block }}
                               <br>
-                              Можно поместить либо меню, либо модуль
+                              {{ help_menu_item }}
                             </a>
                           </li>
                           <li class="col-sm-3">
                             <a href="">
-                              Вложенный блок
+                              {{ text_inner_block }}
                               <br>
-                              Можно поместить либо меню, либо модуль
+                              {{ help_menu_item }}
                             </a>
                           </li>
                           <li class="col-sm-3">
                             <a href="">
-                              Вложенный блок
+                              {{ text_inner_block }}
                               <br>
-                              Можно поместить либо меню, либо модуль
+                              {{ help_menu_item }}
                             </a>
                           </li>
                           <li class="col-sm-3">
                             <a href="">
-                              Вложенный блок
+                              {{ text_inner_block }}
                               <br>
-                              Можно поместить либо меню, либо модуль
+                              {{ help_menu_item }}
                             </a>
                           </li>
                           <li class="col-sm-3">
                             <a href="">
-                              Вложенный блок
+                              {{ text_inner_block }}
                               <br>
-                              Можно поместить либо меню, либо модуль
+                              {{ help_menu_item }}
                             </a>
                           </li>
                           <li class="col-sm-3">
                             <a href="">
-                              Вложенный блок
+                              {{ text_inner_block }}
                               <br>
-                              Можно поместить либо меню, либо модуль
+                              {{ help_menu_item }}
                             </a>
                           </li>
                           <li class="col-sm-3">
                             <a href="">
-                              Вложенный блок
+                              {{ text_inner_block }}
                               <br>
-                              Можно поместить либо меню, либо модуль
+                              {{ help_menu_item }}
                             </a>
                           </li>
                         </ul>
                       </li>
-                      <li><a href="#">Ссылка на одноклассники</a></li>
-                      <li><a href="#">Статьи <i class="fa fa-angle-down"></i></a>
+                      <li><a href="#">{{ text_link_classmates }}</a></li>
+                      <li><a href="#">{{ text_articles }} <i class="fa fa-angle-down"></i></a>
                         <ul class="submenu">
                           <li class="col-sm-3">
                             <a href="">
-                              Вложенный блок
+                              {{ text_inner_block }}
                               <br>
-                              Можно поместить либо меню, либо модуль
+                              {{ help_menu_item }}
                             </a>
                           </li>
                           <li class="col-sm-3">
                             <a href="">
-                              Вложенный блок
+                              {{ text_inner_block }}
                               <br>
-                              Можно поместить либо меню, либо модуль
+                              {{ help_menu_item }}
                             </a>
                           </li>
                           <li class="col-sm-3">
                             <a href="">
-                              Вложенный блок
+                              {{ text_inner_block }}
                               <br>
-                              Можно поместить либо меню, либо модуль
+                              {{ help_menu_item }}
                             </a>
                           </li>
                           <li class="col-sm-3">
                             <a href="">
-                              Вложенный блок
+                              {{ text_inner_block }}
                               <br>
-                              Можно поместить либо меню, либо модуль
+                              {{ help_menu_item }}
                             </a>
                           </li>
                           <li class="col-sm-3">
                             <a href="">
-                              Вложенный блок
+                              {{ text_inner_block }}
                               <br>
-                              Можно поместить либо меню, либо модуль
+                              {{ help_menu_item }}
                             </a>
                           </li>
                           <li class="col-sm-3">
                             <a href="">
-                              Вложенный блок
+                              {{ text_inner_block }}
                               <br>
-                              Можно поместить либо меню, либо модуль
+                              {{ help_menu_item }}
                             </a>
                           </li>
                           <li class="col-sm-3">
                             <a href="">
-                              Вложенный блок
+                              {{ text_inner_block }}
                               <br>
-                              Можно поместить либо меню, либо модуль
+                              {{ help_menu_item }}
                             </a>
                           </li>
                           <li class="col-sm-3">
                             <a href="">
-                              Вложенный блок
+                              {{ text_inner_block }}
                               <br>
-                              Можно поместить либо меню, либо модуль
+                              {{ help_menu_item }}
                             </a>
                           </li>
                         </ul>
                       </li>
-                      <li><a href="#">Контакты</a></li>
+                      <li><a href="#">{{ text_contacts }}</a></li>
                     </ul>
                   </nav>
-                  <button type="button" class="select-view-btn" id="select_horizontal_menu">Выбрать вид</button>
+                  <button type="button" class="select-view-btn" id="select_horizontal_menu">{{ select_view }}</button>
                 </div>
               </div>
             </div>
@@ -348,87 +349,87 @@
               <div class="col-sm-5">
                 <div style="width: 100%; border: 1px solid #e3e3e3; min-height: 350px; height: 100%;">
                   <div class="sidenav">
-                    <span>Главная</span>
+                    <span>{{ text_main }}</span>
                     <button type="button" class="dropdown-btn">
-                      Каталог товаров
+                      {{ text_product_catalog }}
                       <i class="fa fa-caret-down pull-right"></i>
                     </button>
                     <div class="dropdown-container">
-                      <span>Строительные инструменты</span>
-                      <span>Чайная продукция</span>
+                      <span>{{ text_tools }}</span>
+                      <span>{{ text_tea_products }}</span>
                     </div>
-                    <span>Ссылка на одноклассники</span>
+                    <span>{{ text_link_classmates }}</span>
                     <button type="button" class="dropdown-btn">
-                      Статьи
+                      {{ text_articles }}
                       <i class="fa fa-caret-down pull-right"></i>
                     </button>
                     <div class="dropdown-container">
-                      <span>Статья 1</span>
-                      <span>Статья 2</span>
-                      <span>Статья 3</span>
+                      <span>{{ text_article_1 }}</span>
+                      <span>{{ text_article_2 }}</span>
+                      <span>{{ text_article_3 }}</span>
                     </div>
-                    <span>Контакты</span>
+                    <span>{{ text_contacts }}</span>
                   </div>
-                  <button type="button" class="select-view-btn" id="select_vertical_menu_1">Выбрать вид</button>
+                  <button type="button" class="select-view-btn" id="select_vertical_menu_1">{{ select_view }}</button>
                 </div>
               </div>
 
               <div class="col-sm-5">
                 <div style="width: 100%; border: 1px solid #e3e3e3; height: 350px;">
                   <div class="sidenav-other">
-                    <span>Главная</span>
+                    <span>{{ text_main }}</span>
                     <button type="button" class="dropdown-btn-other">
-                      Каталог товаров
+                      {{ text_product_catalog }}
                       <i class="fa fa-caret-right pull-right"></i>
                     </button>
                     <div class="dropdown-container" style="top: 42px;">
                       <div class="col-sm-4">
-                        <a href="#">Вложенный блок</a>
+                        <a href="#">{{ text_inner_block }}</a>
                       </div>
                       <div class="col-sm-4">
-                        <a href="#">Вложенный блок</a>
+                        <a href="#">{{ text_inner_block }}</a>
                       </div>
                       <div class="col-sm-4">
-                        <a href="#">Вложенный блок</a>
+                        <a href="#">{{ text_inner_block }}</a>
                       </div>
                       <div class="col-sm-4">
-                        <a href="#">Вложенный блок</a>
+                        <a href="#">{{ text_inner_block }}</a>
                       </div>
                       <div class="col-sm-4">
-                        <a href="#">Вложенный блок</a>
+                        <a href="#">{{ text_inner_block }}</a>
                       </div>
                       <div class="col-sm-4">
-                        <a href="#">Вложенный блок</a>
+                        <a href="#">{{ text_inner_block }}</a>
                       </div>
                     </div>
-                    <span>Ссылка на одноклассники</span>
+                    <span>{{ text_link_classmates }}</span>
                     <button type="button" class="dropdown-btn-other">
-                      Статьи
+                      {{ text_articles }}
                       <i class="fa fa-caret-right pull-right"></i>
                     </button>
                     <div class="dropdown-container" style="top: 84px;">
                       <div class="col-sm-4">
-                        <a href="#">Вложенный блок</a>
+                        <a href="#">{{ text_inner_block }}</a>
                       </div>
                       <div class="col-sm-4">
-                        <a href="#">Вложенный блок</a>
+                        <a href="#">{{ text_inner_block }}</a>
                       </div>
                       <div class="col-sm-4">
-                        <a href="#">Вложенный блок</a>
+                        <a href="#">{{ text_inner_block }}</a>
                       </div>
                       <div class="col-sm-4">
-                        <a href="#">Вложенный блок</a>
+                        <a href="#">{{ text_inner_block }}</a>
                       </div>
                       <div class="col-sm-4">
-                        <a href="#">Вложенный блок</a>
+                        <a href="#">{{ text_inner_block }}</a>
                       </div>
                       <div class="col-sm-4">
-                        <a href="#">Вложенный блок</a>
+                        <a href="#">{{ text_inner_block }}</a>
                       </div>
                     </div>
-                    <span>Контакты</span>
+                    <span>{{ text_contacts }}</span>
                   </div>
-                  <button type="button" class="select-view-btn" id="select_vertical_menu_2">Выбрать вид</button>
+                  <button type="button" class="select-view-btn" id="select_vertical_menu_2">{{ select_view }}</button>
                 </div>
               </div>
             </div>
