@@ -1,11 +1,12 @@
 {{ header }}
 <style>
-  .create-menu-item-btn {
+  .menu-item-btn {
     padding: 6px 40px;
     background-color: #4DD9FF;
     color: white;
     border: none;
     font-size: 16px;
+    white-space: nowrap;
   }
   .menu-list {
     list-style-type: none;
@@ -35,6 +36,12 @@
     margin: 15px;
     padding: 6px;
     width: 80%;
+  }
+  .select-link-item {
+    padding: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 </style>
 {{ column_left }}
@@ -76,26 +83,23 @@
           <div class="form-group">
             <div class="col-sm-3">
               <div class="menu-block">
-                <button type="button" class="create-menu-item-btn">Создать пункт меню</button>
+                <button type="button" id="create-menu-item" class="menu-item-btn">Создать пункт меню</button>
                 <ul class="menu-list">
-                  <li class="menu-list-item">
-                    <span class="menu-list-item__inner">{{ text_main }}</span>
-                    <div>
-                      <button type="button" class="btn btn-primary"><i class="fa fa-pencil"></i></button>
-                      <button type="button" class="btn btn-danger"><i class="fa fa-trash"></i></button>
-                    </div>
-                  </li>
-                  <li class="menu-list-item">
-                    <span class="menu-list-item__inner">{{ text_main }}</span>
-                    <div>
-                      <button type="button" class="btn btn-primary"><i class="fa fa-pencil"></i></button>
-                      <button type="button" class="btn btn-danger"><i class="fa fa-trash"></i></button>
-                    </div>
-                  </li>
+                  {% if menu_items %}
+                    {% for menu_item in menu_items %}
+                      <li class="menu-list-item">
+                        <span class="menu-list-item__inner">{{ menu_item.name }}</span>
+                        <div>
+                          <button type="button" data-menu-item-id="{{ menu_item.id }}" class="btn btn-primary"><i class="fa fa-pencil"></i></button>
+                          <button type="button" data-menu-item-id="{{ menu_item.id }}" class="btn btn-danger"><i class="fa fa-trash"></i></button>
+                        </div>
+                      </li>
+                    {% endfor %}
+                  {% endif %}
                 </ul>
               </div>
             </div>
-            <div class="col-sm-9">
+            <div class="col-sm-9 create-menu-form" style="display: none;">
               <div class="panel panel-default">
                 <div class="panel-heading">
                   <h4 class="panel-title">Настройки пункта меню</h4>
@@ -111,13 +115,13 @@
                     {% for language in languages %}
                       <div class="tab-pane" id="language{{ language.language_id }}">
                         <div class="form-group">
-                          <label class="col-sm-2 control-label" for="input-name{{ language.language_id }}">{{ entry_parent_item }}</label>
+                          <label class="col-sm-2 control-label" for="input-menu_item_parent{{ language.language_id }}">{{ entry_parent_item }}</label>
                           <div class="col-sm-10">
-                            <select name="menu_type" id="input-menu_type" class="form-control">
+                            <select name="menu_item[{{ language.language_id }}][parent]" id="input-menu_item_parent{{ language.language_id }}" class="form-control">
                               <option value="0">{{ text_no }}</option>
                               {% if menu_items %}
                                 {% for menu_item in menu_items %}
-                                  <option value="{{ menu_item['id'] }}">{{ menu_item['name'] }}</option>
+                                  <option value="{{ menu_item.id }}">{{ menu_item.name }}</option>
                                 {% endfor %}
                               {% endif %}
                             </select>
@@ -126,25 +130,28 @@
                         <div class="form-group required">
                           <label class="col-sm-2 control-label" for="input-name{{ language.language_id }}">{{ entry_name_item }}</label>
                           <div class="col-sm-10">
-                            <input type="text" name="product_description[{{ language.language_id }}][name]" value="{{ product_description[language.language_id] ? product_description[language.language_id].name }}" placeholder="{{ entry_name_item }}" id="input-name{{ language.language_id }}" class="form-control"/>
+                            <input type="text" name="menu_item[{{ language.language_id }}][name]" value="{{ menu_item[language.language_id] ? menu_item[language.language_id].name }}" placeholder="{{ entry_name_item }}" id="input-name{{ language.language_id }}" class="form-control"/>
                             {% if error_name[language.language_id] %}
                               <div class="text-danger">{{ error_name[language.language_id] }}</div>
                             {% endif %}
                           </div>
                         </div>
                         <div class="form-group">
-                          <label class="col-sm-2 control-label" for="input-meta-title{{ language.language_id }}">{{ entry_link }}</label>
-                          <div class="col-sm-10">
-                            <input type="text" name="product_description[{{ language.language_id }}][meta_title]" value="{{ product_description[language.language_id] ? product_description[language.language_id].meta_title }}" placeholder="{{ entry_link }}" id="input-meta-title{{ language.language_id }}" class="form-control"/>
+                          <label class="col-sm-2 control-label" for="input-menu-item-link{{ language.language_id }}">{{ entry_link }}</label>
+                          <div class="col-sm-7">
+                            <input type="text" name="menu_item[{{ language.language_id }}][link]" value="{{ menu_item[language.language_id] ? menu_item[language.language_id].link }}" placeholder="{{ entry_link }}" id="input-menu-item-link{{ language.language_id }}" class="form-control"/>
                             {% if error_meta_title[language.language_id] %}
                               <div class="text-danger">{{ error_meta_title[language.language_id] }}</div>
                             {% endif %}
                           </div>
+                          <div class="col-sm-3">
+                            <button type="button" class="menu-item-btn" data-toggle="modal" data-target=".select-link-modal">Выбрать адресс сылки</button>
+                          </div>
                         </div>
                         <div class="form-group">
-                          <label class="col-sm-2 control-label" for="input-meta-title{{ language.language_id }}">{{ entry_class_item }}</label>
+                          <label class="col-sm-2 control-label" for="input-menu-item-class{{ language.language_id }}">{{ entry_class_item }}</label>
                           <div class="col-sm-10">
-                            <input type="text" name="product_description[{{ language.language_id }}][meta_title]" value="{{ product_description[language.language_id] ? product_description[language.language_id].meta_title }}" placeholder="{{ entry_class_item }}" id="input-meta-title{{ language.language_id }}" class="form-control"/>
+                            <input type="text" name="menu_item[{{ language.language_id }}][class]" value="{{ menu_item[language.language_id] ? menu_item[language.language_id].class }}" placeholder="{{ entry_class_item }}" id="input-menu-item-class{{ language.language_id }}" class="form-control"/>
                             {% if error_meta_title[language.language_id] %}
                               <div class="text-danger">{{ error_meta_title[language.language_id] }}</div>
                             {% endif %}
@@ -153,13 +160,24 @@
                         <div class="form-group">
                           <label class="col-sm-2 control-label" for="input-meta-title{{ language.language_id }}">{{ entry_img_item }}</label>
                           <div class="col-sm-10">
-                            <a href="" id="thumb-image" data-toggle="image" class="img-thumbnail"><img src="{{ thumb }}" alt="" title="" data-placeholder="{{ placeholder }}"/></a> <input type="hidden" name="image" value="{{ image }}" id="input-image"/>
+                            <a href="" id="thumb-image" data-toggle="image" class="img-thumbnail">
+                              <img src="{{ thumb }}" alt="" title="" data-placeholder="{{ placeholder }}"/>
+                            </a>
+                            <input type="hidden" name="menu_item[{{ language.language_id }}][image]" value="{{ image }}" id="input-image{{ language.language_id }}"/>
                           </div>
                         </div>
 
+
+                          <div style="display: flex; justify-content: center; align-items: center; ">
+                            <button class="menu-item-btn save-menu-item" type="button" form="menu-item-form">
+                              {{ button_save }}
+                            </button>
+                          </div>
+
                       </div>
-                    {% endfor %}
-                  </div>
+                      {% endfor %}
+                    </div>
+
 
                 </div>
               </div>
@@ -175,50 +193,50 @@
                   <div class="tab-content">
                     <div class="col-sm-3">
                       <div class="menu-item-inner">
-                        <button type="button" class="create-menu-item-btn">{{ button_add_menu }}</button>
-                        <button type="button" class="create-menu-item-btn">{{ button_add_module }}</button>
+                        <button type="button" class="menu-item-btn">{{ button_add_menu }}</button>
+                        <button type="button" class="menu-item-btn">{{ button_add_module }}</button>
                       </div>
                     </div>
                     <div class="col-sm-3">
                       <div class="menu-item-inner">
-                        <button type="button" class="create-menu-item-btn">{{ button_add_menu }}</button>
-                        <button type="button" class="create-menu-item-btn">{{ button_add_module }}</button>
+                        <button type="button" class="menu-item-btn">{{ button_add_menu }}</button>
+                        <button type="button" class="menu-item-btn">{{ button_add_module }}</button>
                       </div>
                     </div>
                     <div class="col-sm-3">
                       <div class="menu-item-inner">
-                        <button type="button" class="create-menu-item-btn">{{ button_add_menu }}</button>
-                        <button type="button" class="create-menu-item-btn">{{ button_add_module }}</button>
+                        <button type="button" class="menu-item-btn">{{ button_add_menu }}</button>
+                        <button type="button" class="menu-item-btn">{{ button_add_module }}</button>
                       </div>
                     </div>
                     <div class="col-sm-3">
                       <div class="menu-item-inner">
-                        <button type="button" class="create-menu-item-btn">{{ button_add_menu }}</button>
-                        <button type="button" class="create-menu-item-btn">{{ button_add_module }}</button>
+                        <button type="button" class="menu-item-btn">{{ button_add_menu }}</button>
+                        <button type="button" class="menu-item-btn">{{ button_add_module }}</button>
                       </div>
                     </div>
                     <div class="col-sm-3">
                       <div class="menu-item-inner">
-                        <button type="button" class="create-menu-item-btn">{{ button_add_menu }}</button>
-                        <button type="button" class="create-menu-item-btn">{{ button_add_module }}</button>
+                        <button type="button" class="menu-item-btn">{{ button_add_menu }}</button>
+                        <button type="button" class="menu-item-btn">{{ button_add_module }}</button>
                       </div>
                     </div>
                     <div class="col-sm-3">
                       <div class="menu-item-inner">
-                        <button type="button" class="create-menu-item-btn">{{ button_add_menu }}</button>
-                        <button type="button" class="create-menu-item-btn">{{ button_add_module }}</button>
+                        <button type="button" class="menu-item-btn">{{ button_add_menu }}</button>
+                        <button type="button" class="menu-item-btn">{{ button_add_module }}</button>
                       </div>
                     </div>
                     <div class="col-sm-3">
                       <div class="menu-item-inner">
-                        <button type="button" class="create-menu-item-btn">{{ button_add_menu }}</button>
-                        <button type="button" class="create-menu-item-btn">{{ button_add_module }}</button>
+                        <button type="button" class="menu-item-btn">{{ button_add_menu }}</button>
+                        <button type="button" class="menu-item-btn">{{ button_add_module }}</button>
                       </div>
                     </div>
                     <div class="col-sm-3">
                       <div class="menu-item-inner">
-                        <button type="button" class="create-menu-item-btn">{{ button_add_menu }}</button>
-                        <button type="button" class="create-menu-item-btn">{{ button_add_module }}</button>
+                        <button type="button" class="menu-item-btn">{{ button_add_menu }}</button>
+                        <button type="button" class="menu-item-btn">{{ button_add_module }}</button>
                       </div>
                     </div>
                   </div>
@@ -248,10 +266,102 @@
       </div>
     </div>
   </div>
-  <script type="text/javascript">
 
+  <div class="modal fade select-link-modal" tabindex="-1" role="dialog" aria-labelledby="selectLinkModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title">Выбрать ссылку</h4>
+          </div>
+          <div class="panel-body">
+
+            <ul class="nav nav-tabs" id="select-link-tabs">
+              <li><a href="#select-link-categories" data-toggle="tab">Категории</a></li>
+              <li><a href="#select-link-articles" data-toggle="tab">Статьи</a></li>
+            </ul>
+            <div class="tab-content">
+              <div class="tab-pane" id="select-link-categories">
+                {% for category in categories %}
+                <div class="select-link-item" data-category-id="{{ category.category_id }}">
+                  <span>{{ category.name }}</span>
+                  <input type="hidden" value="{{ category.link }}">
+                  <button class="btn btn-primary"><i class="fa fa-plus"></i></button>
+                </div>
+                {% endfor %}
+{#                <div class="select-link-item">#}
+{#                  <span style="margin-left: 30px;">Помидоры</span>#}
+{#                  <input type="hidden" value="http://opencartmenu/qwe">#}
+{#                  <button class="btn btn-primary"><i class="fa fa-plus"></i></button>#}
+{#                </div>#}
+{#                <div class="select-link-item">#}
+{#                  <span style="margin-left: 30px;">Огурцы</span>#}
+{#                  <input type="hidden" value="http://opencartmenu/zxc">#}
+{#                  <button class="btn btn-primary"><i class="fa fa-plus"></i></button>#}
+{#                </div>#}
+{#                <div class="select-link-item">#}
+{#                  <span>Фрукты</span>#}
+{#                  <input type="hidden" value="http://opencartmenu/iop">#}
+{#                  <button class="btn btn-primary"><i class="fa fa-plus"></i></button>#}
+{#                </div>#}
+              </div>
+              <div class="tab-pane" id="select-link-articles">
+                {% for information in informations %}
+                  <div class="select-link-item" data-article-id="{{ information.information_id }}">
+                    <span>{{ information.title }}</span>
+                    <input type="hidden" value="{{ information.link }}">
+                    <button class="btn btn-primary"><i class="fa fa-plus"></i></button>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+  $(document).ready(function () {
+    $('.save-menu-item').on('click', function (e) {
+        let formData = $( ":input[name*='menu_item']" ).serializeArray();
+        $.ajax({
+            type: "POST",
+            dataType: 'html',
+            data: $( ":input[name*='menu_item']" ).serialize(),
+            url: 'index.php?route=extension/module/custom_menu_nik/addMenuItems&module_id={{ module_id }}&user_token={{ user_token }}',
+            success: function (response) {
+              console.log(response)
+            }
+        })
+    })
+
+    $('#create-menu-item').on('click', function () {
+      $('.create-menu-form').show();
+    })
+
+    $('.select-link-item button').on('click', function () {
+      let link = $(this).prev().val();
+      let activeTabId = '#language1';
+      $('#language li').each(function (index, item) {
+        if($(item).hasClass('active')) {
+            activeTabId = $(item).find('a').attr('href')
+        }
+      })
+      let languageId = activeTabId.slice(-1)
+      $(activeTabId).find('#input-menu-item-link' + languageId).val(link)
+      $('.select-link-modal').modal('hide')
+    })
+  })
 
   </script>
+  <script type="text/javascript"><!--
+      $('#select-link-tabs a:first').tab('show');
+      $('#option a:first').tab('show');
+  //--></script>
   <script type="text/javascript"><!--
       $('#language a:first').tab('show');
       $('#option a:first').tab('show');

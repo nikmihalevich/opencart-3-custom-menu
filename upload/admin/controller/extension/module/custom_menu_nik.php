@@ -151,6 +151,11 @@ class ControllerExtensionModuleCustomMenuNik extends Controller {
             }
 
             $data['user_token'] = $this->session->data['user_token'];
+            $data['module_id']  = $this->request->get['module_id'];
+
+            $this->load->model('extension/module/custom_menu_nik');
+
+            $data['menu_items'] = $this->model_extension_module_custom_menu_nik->getMenuItems($this->request->get['module_id']);
 
             $this->load->model('localisation/language');
 
@@ -176,6 +181,34 @@ class ControllerExtensionModuleCustomMenuNik extends Controller {
             }
 
             $data['placeholder'] = $this->model_tool_image->resize('no_image.png', 100, 100);
+
+            $this->load->model('catalog/category');
+
+            $data['categories'] = array();
+
+            $results = $this->model_catalog_category->getCategories();
+
+            foreach ($results as $result) {
+                $data['categories'][] = array(
+                    'category_id' => $result['category_id'],
+                    'name'        => $result['name'],
+                    'link'        => $this->url->link('product/category', 'path=' . $result['category_id'])
+                );
+            }
+
+            $this->load->model('catalog/information');
+
+            $data['informations'] = array();
+
+            $results = $this->model_catalog_information->getInformations();
+
+            foreach ($results as $result) {
+                $data['informations'][] = array(
+                    'information_id' => $result['information_id'],
+                    'title'          => $result['title'],
+                    'link'           => $this->url->link('information/information', 'information_id=' . $result['information_id'])
+                );
+            }
 
             if (isset($this->request->post['name'])) {
                 $data['name'] = $this->request->post['name'];
@@ -205,6 +238,25 @@ class ControllerExtensionModuleCustomMenuNik extends Controller {
 
             $this->response->setOutput($this->load->view('extension/module/custom_menu_edit_nik', $data));
         }
+    }
+
+    public function addMenuItems() {
+        if(isset($this->request->get['module_id']) && $this->request->server['REQUEST_METHOD'] == 'POST') {
+            $this->load->model('extension/module/custom_menu_nik');
+
+            $formData = $_POST;
+            $formData['module_id'] = $this->request->get['module_id'];
+
+            $this->model_extension_module_custom_menu_nik->addMenuItem($formData);
+
+            $this->response->setOutput('success');
+        }
+    }
+
+    public function install() {
+        $this->load->model('extension/module/custom_menu_nik');
+
+        $this->model_extension_module_custom_menu_nik->install();
     }
 
 	protected function validate() {
