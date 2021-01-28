@@ -1,5 +1,8 @@
 {{ header }}
 <style>
+  .menu-block .btn {
+    margin: 2px;
+  }
   .menu-item-btn {
     padding: 6px 40px;
     background-color: #4DD9FF;
@@ -24,6 +27,9 @@
   .menu-list-item__inner {
 
   }
+  .menu-list-item div {
+    min-width: fit-content;
+  }
   .menu-item-inner {
     display: flex;
     justify-content: center;
@@ -45,6 +51,24 @@
   }
 </style>
 {{ column_left }}
+
+{% macro list(items, step = 0) %}
+  {% import _self as tree %}
+
+    {% for item in items %}
+      <li class="menu-list-item" style="margin-left: {{ step * 25 }}px;">
+        <span class="menu-list-item__inner">{{ item.name }}</span>
+        <div>
+          <button type="button" data-menu-item-id="{{ item.id }}" class="btn btn-primary edit-menu-item"><i class="fa fa-pencil"></i></button>
+          <button type="button" data-menu-item-id="{{ item.id }}" class="btn btn-danger delete-menu-item"><i class="fa fa-trash"></i></button>
+        </div>
+        {% if item.children %}
+          {{ tree.list(item.children, step + 1) }}
+        {% endif %}
+      </li>
+    {% endfor %}
+{% endmacro %}
+
 <div id="content">
   <div class="page-header">
     <div class="container-fluid">
@@ -85,17 +109,7 @@
               <div class="menu-block">
                 <button type="button" id="create-menu-item" class="menu-item-btn">Создать пункт меню</button>
                 <ul class="menu-list">
-                  {% if menu_items %}
-                    {% for menu_item in menu_items %}
-                      <li class="menu-list-item">
-                        <span class="menu-list-item__inner">{{ menu_item.name }}</span>
-                        <div>
-                          <button type="button" data-menu-item-id="{{ menu_item.id }}" class="btn btn-primary"><i class="fa fa-pencil"></i></button>
-                          <button type="button" data-menu-item-id="{{ menu_item.id }}" class="btn btn-danger"><i class="fa fa-trash"></i></button>
-                        </div>
-                      </li>
-                    {% endfor %}
-                  {% endif %}
+                  {{ _self.list(menu_items) }}
                 </ul>
               </div>
             </div>
@@ -117,11 +131,11 @@
                         <div class="form-group">
                           <label class="col-sm-2 control-label" for="input-menu_item_parent{{ language.language_id }}">{{ entry_parent_item }}</label>
                           <div class="col-sm-10">
-                            <select name="menu_item[{{ language.language_id }}][parent]" id="input-menu_item_parent{{ language.language_id }}" class="form-control">
+                            <select name="menu_item[{{ language.language_id }}][parent_id]" id="input-menu_item_parent{{ language.language_id }}" class="form-control select_parent_id">
                               <option value="0">{{ text_no }}</option>
-                              {% if menu_items %}
-                                {% for menu_item in menu_items %}
-                                  <option value="{{ menu_item.id }}">{{ menu_item.name }}</option>
+                              {% if select_items %}
+                                {% for select_item in select_items %}
+                                  <option value="{{ select_item.id }}">{{ select_item.name }}</option>
                                 {% endfor %}
                               {% endif %}
                             </select>
@@ -160,7 +174,7 @@
                         <div class="form-group">
                           <label class="col-sm-2 control-label" for="input-meta-title{{ language.language_id }}">{{ entry_img_item }}</label>
                           <div class="col-sm-10">
-                            <a href="" id="thumb-image" data-toggle="image" class="img-thumbnail">
+                            <a href="" id="thumb-image{{ language.language_id }}" data-toggle="image" class="img-thumbnail">
                               <img src="{{ thumb }}" alt="" title="" data-placeholder="{{ placeholder }}"/>
                             </a>
                             <input type="hidden" name="menu_item[{{ language.language_id }}][image]" value="{{ image }}" id="input-image{{ language.language_id }}"/>
@@ -169,7 +183,7 @@
 
 
                           <div style="display: flex; justify-content: center; align-items: center; ">
-                            <button class="menu-item-btn save-menu-item" type="button" form="menu-item-form">
+                            <button class="menu-item-btn save-menu-item" id="save-menu-item-btn{{ language.language_id }}" type="button" form="menu-item-form">
                               {{ button_save }}
                             </button>
                           </div>
@@ -326,20 +340,152 @@
 
   <script type="text/javascript">
   $(document).ready(function () {
-    $('.save-menu-item').on('click', function (e) {
-        let formData = $( ":input[name*='menu_item']" ).serializeArray();
-        $.ajax({
-            type: "POST",
-            dataType: 'html',
-            data: $( ":input[name*='menu_item']" ).serialize(),
-            url: 'index.php?route=extension/module/custom_menu_nik/addMenuItems&module_id={{ module_id }}&user_token={{ user_token }}',
-            success: function (response) {
-              console.log(response)
+    deleteMenuItem();
+    function deleteMenuItem() {
+        $('.delete-menu-item').unbind('click');
+        $('.delete-menu-item').on('click', function (e) {
+            if(confirm('Вы уверены, что хотите удалить пункт меню?')) {
+                $.ajax({
+                    type: "POST",
+                    url: "index.php?route=extension/module/custom_menu_nik/deleteMenuItem&user_token={{ user_token }}&menu_item_id=" + $(this).data('menu-item-id'),
+                    success: function (res) {
+                        getMenuItems()
+                        getSelectItems()
+                    }
+                })
             }
         })
+    }
+
+    editMenuItem()
+    function editMenuItem() {
+        $('.edit-menu-item').unbind('click');
+        $('.edit-menu-item').on('click', function (e) {
+            $.ajax({
+                type: "GET",
+                url: "index.php?route=extension/module/custom_menu_nik/getMenuItem&user_token={{ user_token }}&menu_item_id=" + $(this).data('menu-item-id'),
+                success: function (res) {
+                    let keys = Object.keys(res);
+                    for (let i = 0; i < keys.length; i++) {
+                        let el = $( ":input[name='menu_item[" + res['language_id'] + "][" + keys[i] + "]']" )
+                        if(el.length) {
+                            el.val(res[keys[i]])
+                        }
+                    }
+                    $('#thumb-image' + res['language_id'] + ' img').attr('src', res['thumb'])
+                    $('#save-menu-item-btn' + res['language_id']).data('menu-item-id', res['id'])
+
+                    $('.create-menu-form').show();
+                }
+            })
+        })
+    }
+
+    $('.save-menu-item').on('click', function (e) {
+        if(!$(this).data('menu-item-id')) { // add menu item
+            $.ajax({
+                type: "POST",
+                dataType: 'html',
+                data: $( ":input[name*='menu_item']" ).serialize(),
+                url: 'index.php?route=extension/module/custom_menu_nik/addMenuItems&module_id={{ module_id }}&user_token={{ user_token }}',
+                success: function (res) {
+                    getMenuItems()
+                    getSelectItems()
+                    clearFields();
+                    $('.create-menu-form').hide()
+                }
+            })
+        } else { // edit menu item
+            $.ajax({
+                type: "POST",
+                dataType: 'html',
+                data: $( ":input[name*='menu_item']" ).serialize(),
+                url: 'index.php?route=extension/module/custom_menu_nik/editMenuItem&user_token={{ user_token }}&menu_item_id=' + $(this).data('menu-item-id'),
+                success: function (res) {
+                    getMenuItems()
+                    getSelectItems()
+                    clearFields();
+                    $('.create-menu-form').hide()
+                }
+            })
+        }
     })
 
+    function clearFields() {
+        $( ":input[name*='menu_item']" ).each(function (i, item) {
+            if($(item).is('select')) {
+                $(item).find('option[value="0"]').prop('selected', true)
+            } else {
+                $(item).val('')
+            }
+        })
+        // ADD CLEARING IMG THUMB AFTER SAVING
+    }
+    
+    function getSelectItemsEdit() {
+      // ADD GETTING SELECT HTML (OPTIONS) WITHOUT EDITING MENU ITEM
+    }
+
+    function getSelectItems(editMenuItemID) {
+        let html = '';
+        $.ajax({
+            type: "GET",
+            url: "index.php?route=extension/module/custom_menu_nik/getSelectItems&module_id={{ module_id }}&user_token={{ user_token }}",
+            success: function (res) {
+                html = selectList(res, editMenuItemID);
+                $('.select_parent_id').html(html)
+
+            }
+        })
+    }
+
+    function selectList(arr, id) {
+        let html = '<option value="0">{{ text_no }}</option>';
+        for(let i = 0; i < arr.length; i++) {
+            if(arr[i].id !== id)
+              html += '<option value="'+ arr[i].id +'">'+ arr[i].name +'</option>';
+        }
+
+        return html;
+    }
+
+    function getMenuItems() {
+        let html = '';
+        $.ajax({
+            type: "GET",
+            url: "index.php?route=extension/module/custom_menu_nik/getMenuItems&module_id={{ module_id }}&user_token={{ user_token }}",
+            success: function (res) {
+                html = menuList(res);
+                $('.menu-list').html(html);
+                deleteMenuItem()
+                editMenuItem()
+            }
+        })
+    }
+
+    function menuList(arr, step = 0) {
+        let branch = '';
+        for(let i = 0; i < arr.length; i++) {
+            branch += '<li class="menu-list-item" style="margin-left: ' + (step * 25) + 'px;">' +
+                '<span class="menu-list-item__inner">' + arr[i].name + '</span>' +
+                '<div>' +
+                '<button type="button" data-menu-item-id="' + arr[i].id +'" class="btn btn-primary edit-menu-item"><i class="fa fa-pencil"></i></button>' +
+                '<button type="button" data-menu-item-id="' + arr[i].id +'" class="btn btn-danger delete-menu-item"><i class="fa fa-trash"></i></button>' +
+            '</div>';
+            if(arr[i].children) {
+              branch += menuList(arr[i].children, step + 1);
+            }
+
+            branch += '</li>';
+        }
+        return branch;
+    }
+
     $('#create-menu-item').on('click', function () {
+      clearFields()
+      $('.save-menu-item').each(function (i, item) {
+        $(item).data('menu-item-id', false)
+      })
       $('.create-menu-form').show();
     })
 

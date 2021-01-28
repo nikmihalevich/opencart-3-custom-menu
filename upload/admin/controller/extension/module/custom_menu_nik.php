@@ -12,9 +12,10 @@ class ControllerExtensionModuleCustomMenuNik extends Controller {
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
 			if (!isset($this->request->get['module_id'])) {
 				$this->model_setting_module->addModule('custom_menu_nik', $this->request->post);
-			} else {
-				$this->model_setting_module->editModule($this->request->get['module_id'], $this->request->post);
 			}
+//			else {
+//				$this->model_setting_module->editModule($this->request->get['module_id'], $this->request->post);
+//			}
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
@@ -155,7 +156,13 @@ class ControllerExtensionModuleCustomMenuNik extends Controller {
 
             $this->load->model('extension/module/custom_menu_nik');
 
-            $data['menu_items'] = $this->model_extension_module_custom_menu_nik->getMenuItems($this->request->get['module_id']);
+            $menu_items = $this->model_extension_module_custom_menu_nik->getMenuItems($this->request->get['module_id']);
+
+            $data['select_items'] = $menu_items;
+
+            $tree = $this->buildTree($menu_items);
+
+            $data['menu_items'] = $tree;
 
             $this->load->model('localisation/language');
 
@@ -240,6 +247,68 @@ class ControllerExtensionModuleCustomMenuNik extends Controller {
         }
     }
 
+    private function buildTree(array $elements, $parentId = 0) {
+        $branch = array();
+
+        foreach ($elements as $element) {
+            if ($element['parent_id'] == $parentId) {
+                $children = $this->buildTree($elements, $element['id']);
+                if ($children) {
+                    $element['children'] = $children;
+                }
+                $branch[] = $element;
+            }
+        }
+
+        return $branch;
+    }
+
+    public function getSelectItems() {
+        if(isset($this->request->get['module_id']) && $this->request->server['REQUEST_METHOD'] == 'GET') {
+            $this->load->model('extension/module/custom_menu_nik');
+
+            $results = $this->model_extension_module_custom_menu_nik->getMenuItems($this->request->get['module_id']);
+
+            $this->response->addHeader('Content-Type: application/json');
+            $this->response->setOutput(json_encode($results));
+        }
+    }
+
+    public function getMenuItem() {
+        if(isset($this->request->get['menu_item_id']) && $this->request->server['REQUEST_METHOD'] == 'GET') {
+            $this->load->model('extension/module/custom_menu_nik');
+
+            $results = $this->model_extension_module_custom_menu_nik->getMenuItem($this->request->get['menu_item_id']);
+
+            $this->load->model('tool/image');
+
+            if (!empty($results) && isset($results['image']) && is_file(DIR_IMAGE . $results['image'])) {
+                $results['thumb'] = $this->model_tool_image->resize($results['image'], 100, 100);
+            } else {
+                $results['thumb'] = $this->model_tool_image->resize('no_image.png', 100, 100);
+            }
+
+            $this->response->addHeader('Content-Type: application/json');
+            $this->response->setOutput(json_encode($results));
+        }
+    }
+
+    public function getMenuItems() {
+        if(isset($this->request->get['module_id']) && $this->request->server['REQUEST_METHOD'] == 'GET') {
+            $this->load->model('extension/module/custom_menu_nik');
+            $json = array();
+
+            $results = $this->model_extension_module_custom_menu_nik->getMenuItems($this->request->get['module_id']);
+
+            $tree = $this->buildTree($results);
+
+
+            $this->response->addHeader('Content-Type: application/json');
+            $this->response->setOutput(json_encode($tree));
+        }
+    }
+
+
     public function addMenuItems() {
         if(isset($this->request->get['module_id']) && $this->request->server['REQUEST_METHOD'] == 'POST') {
             $this->load->model('extension/module/custom_menu_nik');
@@ -253,10 +322,38 @@ class ControllerExtensionModuleCustomMenuNik extends Controller {
         }
     }
 
+    public function editMenuItem() {
+        if(isset($this->request->get['menu_item_id']) && $this->request->server['REQUEST_METHOD'] == 'POST') {
+            $this->load->model('extension/module/custom_menu_nik');
+
+            $formData = $_POST;
+
+            $this->model_extension_module_custom_menu_nik->editMenuItem($this->request->get['menu_item_id'], $formData['menu_item'][(int)$this->config->get('config_language_id')]);
+
+            $this->response->setOutput('success');
+        }
+    }
+
+    public function deleteMenuItem() {
+        if(isset($this->request->get['menu_item_id']) && $this->request->server['REQUEST_METHOD'] == 'POST') {
+            $this->load->model('extension/module/custom_menu_nik');
+
+            $this->model_extension_module_custom_menu_nik->deleteMenuItem($this->request->get['menu_item_id']);
+
+            $this->response->setOutput('success');
+        }
+    }
+
     public function install() {
         $this->load->model('extension/module/custom_menu_nik');
 
         $this->model_extension_module_custom_menu_nik->install();
+    }
+
+    public function uninstall() {
+        $this->load->model('extension/module/custom_menu_nik');
+
+        $this->model_extension_module_custom_menu_nik->uninstall();
     }
 
 	protected function validate() {
