@@ -17,8 +17,10 @@
     font-size: 15px;
   }
   .menu-list-item {
-    padding: 10px;
-    border: 1px solid #e3e3e3;
+    padding: 3px;
+    padding-left: 15px;
+    border-radius: 3px;
+    border: 2px solid #d9d9d9;
     margin-bottom: 5px;
     display: flex;
     justify-content: space-between;
@@ -30,7 +32,7 @@
   .menu-list-item div {
     min-width: fit-content;
   }
-  .menu-item-inner {
+  .menu-item-inner-block {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -38,16 +40,23 @@
     border: 1px solid #e3e3e3;
     margin-bottom: 10px;
   }
-  .menu-item-inner button {
+  .menu-item-inner-block button {
     margin: 15px;
     padding: 6px;
     width: 80%;
   }
-  .select-link-item {
+  .select-link-item, .add-edit-menu-item, .add-edit-module-item, .added-menu-item-menu, .added-menu-item-module {
     padding: 5px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-weight: bold;
+  }
+  .inner-blocks-placeholder {
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+    font-size: 16px;
   }
 </style>
 {{ column_left }}
@@ -67,6 +76,21 @@
         {% endif %}
       </li>
     {% endfor %}
+{% endmacro %}
+
+{% macro category_list(items, step = 0) %}
+  {% import _self as tree %}
+
+  {% for item in items %}
+    <div class="select-link-item" data-category-id="{{ item.id }}">
+      <span style="margin-left: {{ step * 30 }}px;">{{ item.name }}</span>
+      <input type="hidden" value="{{ item.link }}">
+      <button class="btn btn-primary"><i class="fa fa-plus"></i></button>
+    </div>
+    {% if item.children %}
+      {{ tree.category_list(item.children, step + 1) }}
+    {% endif %}
+  {% endfor %}
 {% endmacro %}
 
 <div id="content">
@@ -182,82 +206,45 @@
                         </div>
 
 
-                          <div style="display: flex; justify-content: center; align-items: center; ">
+                          <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
                             <button class="menu-item-btn save-menu-item" id="save-menu-item-btn{{ language.language_id }}" type="button" form="menu-item-form">
                               {{ button_save }}
                             </button>
                           </div>
 
+                        {% if menu_type != '1' %}
+
+                          <div class="inner-blocks-placeholder" id="inner-blocks-placeholder{{ language.language_id }}">
+                            Создайте пункт меню, чтобы добавить в него блоки
+                          </div>
+
+                          <div class="panel panel-default inner-blocks" id="inner-blocks-panel{{ language.language_id }}" style="display: none;">
+                            <div class="panel-heading">
+                              <h4 class="panel-title">Вложение пункта меню</h4>
+                            </div>
+                            <div class="panel-body">
+
+                              <div class="tab-content">
+                                {% for id in 1..8 %}
+                                  <div class="col-sm-3">
+                                    <div class="menu-item-inner-block" data-language-id="{{ language.language_id }}" data-block-id="{{ id }}">
+                                      <button type="button" data-toggle="modal" data-target=".add-edit-menu-modal" class="menu-item-btn">{{ button_add_menu }}</button>
+                                      <button type="button" data-toggle="modal" data-target=".add-edit-module-modal" class="menu-item-btn">{{ button_add_module }}</button>
+                                    </div>
+                                  </div>
+                                {% endfor %}
+                              </div>
+
+                            </div>
+                          </div>
+                        {% endif %}
+
                       </div>
                       {% endfor %}
                     </div>
 
-
                 </div>
               </div>
-
-              {% if menu_type != '1' %}
-              <div class="panel panel-default">
-                <div class="panel-heading">
-                  <h4 class="panel-title">Вложение пункта меню</h4>
-                </div>
-                <div class="panel-body">
-
-
-                  <div class="tab-content">
-                    <div class="col-sm-3">
-                      <div class="menu-item-inner">
-                        <button type="button" class="menu-item-btn">{{ button_add_menu }}</button>
-                        <button type="button" class="menu-item-btn">{{ button_add_module }}</button>
-                      </div>
-                    </div>
-                    <div class="col-sm-3">
-                      <div class="menu-item-inner">
-                        <button type="button" class="menu-item-btn">{{ button_add_menu }}</button>
-                        <button type="button" class="menu-item-btn">{{ button_add_module }}</button>
-                      </div>
-                    </div>
-                    <div class="col-sm-3">
-                      <div class="menu-item-inner">
-                        <button type="button" class="menu-item-btn">{{ button_add_menu }}</button>
-                        <button type="button" class="menu-item-btn">{{ button_add_module }}</button>
-                      </div>
-                    </div>
-                    <div class="col-sm-3">
-                      <div class="menu-item-inner">
-                        <button type="button" class="menu-item-btn">{{ button_add_menu }}</button>
-                        <button type="button" class="menu-item-btn">{{ button_add_module }}</button>
-                      </div>
-                    </div>
-                    <div class="col-sm-3">
-                      <div class="menu-item-inner">
-                        <button type="button" class="menu-item-btn">{{ button_add_menu }}</button>
-                        <button type="button" class="menu-item-btn">{{ button_add_module }}</button>
-                      </div>
-                    </div>
-                    <div class="col-sm-3">
-                      <div class="menu-item-inner">
-                        <button type="button" class="menu-item-btn">{{ button_add_menu }}</button>
-                        <button type="button" class="menu-item-btn">{{ button_add_module }}</button>
-                      </div>
-                    </div>
-                    <div class="col-sm-3">
-                      <div class="menu-item-inner">
-                        <button type="button" class="menu-item-btn">{{ button_add_menu }}</button>
-                        <button type="button" class="menu-item-btn">{{ button_add_module }}</button>
-                      </div>
-                    </div>
-                    <div class="col-sm-3">
-                      <div class="menu-item-inner">
-                        <button type="button" class="menu-item-btn">{{ button_add_menu }}</button>
-                        <button type="button" class="menu-item-btn">{{ button_add_module }}</button>
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-              {% endif %}
 
             </div>
           </div>
@@ -297,28 +284,7 @@
             </ul>
             <div class="tab-content">
               <div class="tab-pane" id="select-link-categories">
-                {% for category in categories %}
-                <div class="select-link-item" data-category-id="{{ category.category_id }}">
-                  <span>{{ category.name }}</span>
-                  <input type="hidden" value="{{ category.link }}">
-                  <button class="btn btn-primary"><i class="fa fa-plus"></i></button>
-                </div>
-                {% endfor %}
-{#                <div class="select-link-item">#}
-{#                  <span style="margin-left: 30px;">Помидоры</span>#}
-{#                  <input type="hidden" value="http://opencartmenu/qwe">#}
-{#                  <button class="btn btn-primary"><i class="fa fa-plus"></i></button>#}
-{#                </div>#}
-{#                <div class="select-link-item">#}
-{#                  <span style="margin-left: 30px;">Огурцы</span>#}
-{#                  <input type="hidden" value="http://opencartmenu/zxc">#}
-{#                  <button class="btn btn-primary"><i class="fa fa-plus"></i></button>#}
-{#                </div>#}
-{#                <div class="select-link-item">#}
-{#                  <span>Фрукты</span>#}
-{#                  <input type="hidden" value="http://opencartmenu/iop">#}
-{#                  <button class="btn btn-primary"><i class="fa fa-plus"></i></button>#}
-{#                </div>#}
+                {{ _self.category_list(categories) }}
               </div>
               <div class="tab-pane" id="select-link-articles">
                 {% for information in informations %}
@@ -338,8 +304,170 @@
     </div>
   </div>
 
+  <div class="modal fade add-edit-menu-modal" tabindex="-1" role="dialog" aria-labelledby="selectLinkModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title">Добавить / Редактировать блок</h4>
+          </div>
+          <div class="panel-body">
+
+            <div class="col-sm-8">
+              <ul class="nav nav-tabs" id="add-edit-menu-tabs">
+                <li><a href="#add-edit-block-articles" data-toggle="tab">Статьи</a></li>
+                <li><a href="#add-edit-block-categories" data-toggle="tab">Категории</a></li>
+                <li><a href="#add-edit-block-external-link" data-toggle="tab">Внешняя ссылка</a></li>
+              </ul>
+              <div class="tab-content">
+                <div class="tab-pane" id="add-edit-block-articles">
+                  {% for information in informations %}
+                    <div class="add-edit-menu-item">
+                      <span>{{ information.title }}</span>
+                      <button class="btn btn-primary add-article-btn" data-article-id="{{ information.information_id }}"><i class="fa fa-plus"></i></button>
+                    </div>
+                  {% endfor %}
+                </div>
+                <div class="tab-pane" id="add-edit-block-categories">
+                  {{ _self.category_list(categories) }}
+                </div>
+                <div class="tab-pane" id="add-edit-block-external-link">
+                  <div class="form-group">
+                    <label class="control-label" for="input-name">Введите название пункта меню</label>
+                    <input type="text" name="name" value="" placeholder="Введите название пункта меню" id="input-menu-item-name" class="form-control" />
+                  </div>
+                  <div class="form-group">
+                    <label class="control-label" for="input-name">Введите ссылку (данное поле можно не заполнять)</label>
+                    <input type="text" name="name" value="" placeholder="Введите ссылку (данное поле можно не заполнять)" id="input-menu-item-link" class="form-control" />
+                  </div>
+                  <div style="display: flex; justify-content:center;">
+                    <button type="button" class="menu-item-btn">Добавить пункт</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {# RIGHT SIDE ADD-EDIT-BLOCK POPUP #}
+            <div class="col-sm-4">
+              <div class="inner-block-added-content">
+                <span>Добавлены в блок</span>
+                <hr>
+                <div class="form-group">
+                  <input type="text" placeholder="Введите заголовок блока" name="added-in-block" class="form-control">
+                </div>
+                <div class="inner-block-added-content-list">
+                  {% for number in 1..5 %}
+                    <div class="added-menu-item-menu" data-item-id="{{ number }}">
+                      <span>Punkt {{ number }}</span>
+                      <button class="btn btn-danger"><i class="fa fa-trash"></i></button>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade add-edit-module-modal" tabindex="-1" role="dialog" aria-labelledby="selectLinkModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title">Добавить / Редактировать блок</h4>
+          </div>
+          <div class="panel-body">
+
+            <div class="col-sm-8">
+              <ul class="nav nav-tabs" id="add-edit-module-tabs">
+                <li><a href="#add-edit-module-list" data-toggle="tab">Модули</a></li>
+              </ul>
+              <div class="tab-content">
+                <div class="tab-pane" id="add-edit-module-list">
+                  {% for information in informations %}
+                    <div class="add-edit-module-item">
+                      <span>{{ information.title }}</span>
+                      <button class="btn btn-primary" data-article-id="{{ information.information_id }}"><i class="fa fa-plus"></i></button>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+
+            {# RIGHT SIDE ADD-EDIT-BLOCK POPUP #}
+            <div class="col-sm-4">
+              <div class="inner-block-added-content">
+                <span>Добавлены в блок</span>
+                <hr>
+                <div class="form-group">
+                  <input type="text" placeholder="Введите заголовок блока" name="added-in-block" class="form-control">
+                </div>
+                <div class="inner-block-added-content-list">
+                  {% for number in 1..5 %}
+                    <div class="added-menu-item-module" data-item-id="{{ number }}">
+                      <span>Punkt {{ number }}</span>
+                      <button class="btn btn-danger"><i class="fa fa-trash"></i></button>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
   <script type="text/javascript">
   $(document).ready(function () {
+    $('.menu-item-inner-block button').on('click', function () {
+      let saveBtn = $(this).parent().parent().parent().parent().parent().parent().find('.save-menu-item')
+      let menuItemId = $(saveBtn).data('menu-item-id')
+      let targetSelector = $(this).data('target')
+      $(targetSelector).find('.btn').attr('data-menu-item-id', menuItemId)
+    })
+
+    $('.add-edit-menu-item .add-article-btn').on('click', function () {
+        let menuItemId = $(this).data('menu-item-id')
+        let blocksList = $(this).parent().parent().parent().parent().parent().find('.inner-block-added-content-list')
+        $.ajax({
+            type: "GET",
+            url: "index.php?route=extension/module/custom_menu_nik/addMenuItemBlock&user_token={{ user_token }}&menu_item_id=" + menuItemId + "&article_id=" + $(this).data('article-id'),
+            success: function (res) {
+                getMenuItemBlocks(menuItemId, blocksList)
+            }
+        })
+    })
+
+    function getMenuItemBlocks(menuItemId, target) {
+        $.ajax({
+            type: "GET",
+            url: "index.php?route=extension/module/custom_menu_nik/getMenuItemBlocks&user_token={{ user_token }}&menu_item_id=" + menuItemId,
+            success: function (res) {
+                $(target).html(HtmlMenuItemBlocks(res))
+            }
+        })
+    }
+
+    function HtmlMenuItemBlocks(blocks) {
+        let html = '';
+        for (let i = 0; i < blocks.length; i++) {
+            html += '<div class="added-menu-item-menu" data-block-id="' + blocks[i].id +'">' +
+                        '<span>' + blocks[i].name +'</span>' +
+                        '<button class="btn btn-danger"><i class="fa fa-trash"></i></button>' +
+                    '</div>'
+        }
+        return html;
+    }
+
     deleteMenuItem();
     function deleteMenuItem() {
         $('.delete-menu-item').unbind('click');
@@ -363,8 +491,10 @@
         $('.edit-menu-item').on('click', function (e) {
             $.ajax({
                 type: "GET",
-                url: "index.php?route=extension/module/custom_menu_nik/getMenuItem&user_token={{ user_token }}&menu_item_id=" + $(this).data('menu-item-id'),
+                url: "index.php?route=extension/module/custom_menu_nik/getMenuItem&user_token={{ user_token }}&menu_item_id=" + $(this).data('menu-item-id') + "&module_id={{ module_id }}",
                 success: function (res) {
+                    let html = selectList(res['menu_items']);
+                    $('.select_parent_id').html(html)
                     let keys = Object.keys(res);
                     for (let i = 0; i < keys.length; i++) {
                         let el = $( ":input[name='menu_item[" + res['language_id'] + "][" + keys[i] + "]']" )
@@ -374,6 +504,8 @@
                     }
                     $('#thumb-image' + res['language_id'] + ' img').attr('src', res['thumb'])
                     $('#save-menu-item-btn' + res['language_id']).data('menu-item-id', res['id'])
+                    $('#inner-blocks-placeholder' + res['language_id']).hide()
+                    $('#inner-blocks-panel' + res['language_id']).show()
 
                     $('.create-menu-form').show();
                 }
@@ -419,31 +551,31 @@
                 $(item).val('')
             }
         })
-        // ADD CLEARING IMG THUMB AFTER SAVING
-    }
-    
-    function getSelectItemsEdit() {
-      // ADD GETTING SELECT HTML (OPTIONS) WITHOUT EDITING MENU ITEM
+        // CLEARING IMG THUMB AFTER SAVING
+        $('.img-thumbnail').each(function (i, item) {
+            let imgThumb = $(item).find('img');
+            let imgPlaceholder = imgThumb.data('placeholder')
+            imgThumb.attr('src', imgPlaceholder)
+        })
     }
 
-    function getSelectItems(editMenuItemID) {
+    async function getSelectItems() {
         let html = '';
         $.ajax({
             type: "GET",
             url: "index.php?route=extension/module/custom_menu_nik/getSelectItems&module_id={{ module_id }}&user_token={{ user_token }}",
             success: function (res) {
-                html = selectList(res, editMenuItemID);
+                html = selectList(res);
                 $('.select_parent_id').html(html)
 
             }
         })
     }
 
-    function selectList(arr, id) {
+    function selectList(arr) {
         let html = '<option value="0">{{ text_no }}</option>';
         for(let i = 0; i < arr.length; i++) {
-            if(arr[i].id !== id)
-              html += '<option value="'+ arr[i].id +'">'+ arr[i].name +'</option>';
+            html += '<option value="'+ arr[i].id +'">'+ arr[i].name +'</option>';
         }
 
         return html;
@@ -482,10 +614,13 @@
     }
 
     $('#create-menu-item').on('click', function () {
+      getSelectItems()
       clearFields()
       $('.save-menu-item').each(function (i, item) {
         $(item).data('menu-item-id', false)
       })
+      $('.inner-blocks').hide();
+      $('.inner-blocks-placeholder').show();
       $('.create-menu-form').show();
     })
 
@@ -504,6 +639,14 @@
   })
 
   </script>
+  <script type="text/javascript"><!--
+      $('#add-edit-menu-tabs a:first').tab('show');
+      $('#option a:first').tab('show');
+  //--></script>
+  <script type="text/javascript"><!--
+      $('#add-edit-module-tabs a:first').tab('show');
+      $('#option a:first').tab('show');
+  //--></script>
   <script type="text/javascript"><!--
       $('#select-link-tabs a:first').tab('show');
       $('#option a:first').tab('show');

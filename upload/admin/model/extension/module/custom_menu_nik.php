@@ -14,12 +14,50 @@ class ModelExtensionModuleCustomMenuNik extends Model
 			`image` varchar(255) DEFAULT NULL,
 			PRIMARY KEY (`id`)
 		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci");
+
+        $this->db->query("CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "custom_menu_items_blocks` (
+			`id` INT(11) NOT NULL AUTO_INCREMENT,
+			`menu_item_id` INT(11) NOT NULL,
+			`article_id` INT(11) DEFAULT NULL,
+			`category_id` INT(11) DEFAULT NULL,
+			`external_link_name` varchar(50) DEFAULT NULL,
+			`external_link` varchar(255) DEFAULT NULL,
+			`module_id` INT(11) DEFAULT NULL,
+			PRIMARY KEY (`id`)
+		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci");
     }
 
     public function uninstall() {
         $this->db->query("DROP TABLE IF EXISTS `" . DB_PREFIX . "custom_menu_items`");
+        $this->db->query("DROP TABLE IF EXISTS `" . DB_PREFIX . "custom_menu_items_blocks`");
 
         $this->log('Module uninstalled');
+    }
+
+    public function getMenuItemBlocks($menu_item_id) {
+        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "custom_menu_items_blocks WHERE `menu_item_id` = '" . (int)$menu_item_id . "'");
+
+        return $query->rows;
+    }
+
+    public function addMenuItemBlock($menu_item_id, $block_type, $block) {
+        if($block_type == 'article') {
+            $this->db->query("INSERT INTO " . DB_PREFIX . "custom_menu_items_blocks SET `menu_item_id` = '" . (int)$menu_item_id . "', `article_id` = '" . (int)$block ."'");
+        } elseif($block_type == 'category') {
+            $this->db->query("INSERT INTO " . DB_PREFIX . "custom_menu_items_blocks SET `menu_item_id` = '" . (int)$menu_item_id . "', `category_id` = '" . (int)$block ."'");
+        } elseif($block_type == 'module') {
+            $this->db->query("INSERT INTO " . DB_PREFIX . "custom_menu_items_blocks SET `menu_item_id` = '" . (int)$menu_item_id . "', `module_id` = '" . (int)$block ."'");
+        } else {
+            $this->db->query("INSERT INTO " . DB_PREFIX . "custom_menu_items_blocks SET `menu_item_id` = '" . (int)$menu_item_id . "', `external_link_name` = '" . $block['name']  ."', `external_link_name` = '" . $block['link']  ."'");
+        }
+
+        $this->cache->delete('custom_menu_items_blocks');
+    }
+
+    public function deleteMenuItemBlock($menu_item_block_id) {
+        $this->db->query("DELETE FROM " . DB_PREFIX . "custom_menu_items_blocks WHERE `id` = '" . (int)$menu_item_block_id . "'");
+
+        $this->cache->delete('custom_menu_items_blocks');
     }
 
     public function addMenuItem($data) {
@@ -64,6 +102,16 @@ class ModelExtensionModuleCustomMenuNik extends Model
         } else {
             $sql = "SELECT * FROM " . DB_PREFIX . "custom_menu_items WHERE `language_id` = '" . (int)$this->config->get('config_language_id') . "'";
         }
+
+        $query = $this->db->query($sql);
+
+        return $query->rows;
+    }
+
+    public function getCategories() {
+        $sql = "SELECT cp.category_id AS `id`, cd2.name AS name, c1.parent_id FROM " . DB_PREFIX . "category_path cp LEFT JOIN " . DB_PREFIX . "category c1 ON (cp.category_id = c1.category_id) LEFT JOIN " . DB_PREFIX . "category c2 ON (cp.path_id = c2.category_id) LEFT JOIN " . DB_PREFIX . "category_description cd1 ON (cp.path_id = cd1.category_id) LEFT JOIN " . DB_PREFIX . "category_description cd2 ON (cp.category_id = cd2.category_id) WHERE cd1.language_id = '" . (int)$this->config->get('config_language_id') . "' AND cd2.language_id = '" . (int)$this->config->get('config_language_id') . "'";
+
+        $sql .= " GROUP BY cp.category_id";
 
         $query = $this->db->query($sql);
 
