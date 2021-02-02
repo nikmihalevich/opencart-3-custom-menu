@@ -1,0 +1,93 @@
+{% if setting.menu_type == "0" %}
+  <style>
+    .horizontal-menu {
+      width: 100%;
+      margin: 0 auto 30px;
+    }
+    .horizontal-menu ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .topmenu {
+      position: relative;
+    }
+    .topmenu > li {
+      display: inline-block;
+      position: static;
+    }
+    .topmenu > li:last-child {
+      margin-right: 0;
+    }
+    .horizontal-menu a {
+      display: block;
+      padding: 10px 15px;
+      text-decoration: none;
+      outline: none;
+      transition: .5s linear;
+    }
+    .horizontal-menu .fa {
+      color: inherit;
+      padding-left: 10px;
+    }
+    .submenu {
+      position: absolute;
+      top: 115%;
+      left: 0;
+      width: 100%;
+      z-index: 10;
+      -webkit-transition: 0.5s ease-in-out;
+      -moz-transition: 0.5s ease-in-out;
+      -o-transition: 0.5s ease-in-out;
+      transition: 0.5s ease-in-out;
+      background-color: #e6e6e6;
+    }
+    .submenu > li > a {
+      background-color: #fff;
+      height: 100px;
+    }
+    .horizontal-menu .topmenu li {
+      border: 1px solid #e3e3e3;
+      padding: 0 60px;
+    }
+    .horizontal-menu ul a {
+      color: #695753;
+    }
+    .horizontal-menu .submenu li {
+      padding: 3px 7px;
+      border: none;
+    }
+  </style>
+
+  <nav class="horizontal-menu">
+    <ul class="topmenu">
+      {% for item in menu %}
+        <li class="{{ item.class }}" data-img="{{ item.thumb }}"><a href="{{ item.link }}">{{ item.name }}</a></li>
+      {% endfor %}
+    </ul>
+  </nav>
+
+
+  <script type="text/javascript">
+      $(".horizontal-menu li ul").hide(); // скрываем выпадающее меню
+      /* отбираем элемент списка, который содержит элемент с классом .submenu и добавляем ему функцию при наведении, которая показывает и скрывает выпадающее меню */
+      $(".horizontal-menu li:has('.submenu')").on('click', function(e){
+          e.preventDefault();
+          let submenus = $('.submenu');
+          for (let t = 0; t < submenus.length; t++) {
+              if($(this).find('ul.submenu')[0] !== submenus[t]) {
+                  submenus[t].style.display = 'none';
+                  submenus[t].parentNode.classList.remove('active')
+              }
+          }
+          $(this).toggleClass('active')
+          $(this).find('ul.submenu').toggle();
+
+      });
+  </script>
+
+{% elseif setting.menu_type == "1" %}
+
+{% else %}
+
+{% endif %}

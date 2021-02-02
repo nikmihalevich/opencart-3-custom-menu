@@ -14,6 +14,7 @@ class ControllerExtensionModuleCustomMenuNik extends Controller {
 				$this->model_setting_module->addModule('custom_menu_nik', $this->request->post);
 			} else {
 			    $module = $this->model_setting_module->getModule($this->request->get['module_id']);
+                $module['module_id'] = $this->request->get['module_id'];
                 $module['name'] = $this->request->post['name'];
                 $module['status'] = $this->request->post['status'];
                 $this->model_setting_module->editModule($this->request->get['module_id'], $module);
@@ -226,11 +227,18 @@ class ControllerExtensionModuleCustomMenuNik extends Controller {
             $results = $this->model_extension_module_custom_menu_nik->getCategories();
 
             foreach ($results as $result) {
+                $link = $this->url->link('product/category', 'path=' . $result['id']);
+                $link_arr = explode('/', $link);
+                foreach ($link_arr as $key => $el) {
+                    if($el == 'admin') {
+                        unset($link_arr[$key]);
+                    }
+                }
                 $data['categories'][] = array(
                     'id'          => $result['id'],
                     'name'        => $result['name'],
                     'parent_id'   => $result['parent_id'],
-                    'link'        => $this->url->link('product/category', 'path=' . $result['id'])
+                    'link'        => implode('/', $link_arr)
                 );
             }
 
@@ -243,10 +251,17 @@ class ControllerExtensionModuleCustomMenuNik extends Controller {
             $results = $this->model_catalog_information->getInformations();
 
             foreach ($results as $result) {
+                $link = $this->url->link('information/information', 'information_id=' . $result['information_id']);
+                $link_arr = explode('/', $link);
+                foreach ($link_arr as $key => $el) {
+                    if($el == 'admin') {
+                        unset($link_arr[$key]);
+                    }
+                }
                 $data['informations'][] = array(
                     'information_id' => $result['information_id'],
                     'title'          => $result['title'],
-                    'link'           => $this->url->link('information/information', 'information_id=' . $result['information_id'])
+                    'link'           => implode('/', $link_arr)
                 );
             }
 
