@@ -22,7 +22,7 @@ class ModelExtensionModuleCustomMenuNik extends Model {
 			`category_id` INT(11) DEFAULT NULL,
 			`external_link_name` varchar(50) DEFAULT NULL,
 			`external_link` varchar(255) DEFAULT NULL,
-			`module_id` INT(11) DEFAULT NULL,
+			`module_code` varchar(50) DEFAULT NULL,
 			PRIMARY KEY (`id`)
 		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci");
     }
@@ -52,9 +52,9 @@ class ModelExtensionModuleCustomMenuNik extends Model {
         } elseif($block_type == 'category') {
             $this->db->query("INSERT INTO " . DB_PREFIX . "custom_menu_items_blocks SET `menu_item_id` = '" . (int)$menu_item_id . "', `block_id` = '" . (int)$block_id ."', `category_id` = '" . (int)$block ."'");
         } elseif($block_type == 'module') {
-            $this->db->query("INSERT INTO " . DB_PREFIX . "custom_menu_items_blocks SET `menu_item_id` = '" . (int)$menu_item_id . "', `block_id` = '" . (int)$block_id ."', `module_id` = '" . (int)$block ."'");
+            $this->db->query("INSERT INTO " . DB_PREFIX . "custom_menu_items_blocks SET `menu_item_id` = '" . (int)$menu_item_id . "', `block_id` = '" . (int)$block_id ."', `module_code` = '" . $this->db->escape($block) ."'");
         } else {
-            $this->db->query("INSERT INTO " . DB_PREFIX . "custom_menu_items_blocks SET `menu_item_id` = '" . (int)$menu_item_id . "', `block_id` = '" . (int)$block_id ."', `external_link_name` = '" . $block['name']  ."', `external_link_name` = '" . $block['link']  ."'");
+            $this->db->query("INSERT INTO " . DB_PREFIX . "custom_menu_items_blocks SET `menu_item_id` = '" . (int)$menu_item_id . "', `block_id` = '" . (int)$block_id ."', `external_link_name` = '" . $this->db->escape($block['name'])  ."', `external_link` = '" . $this->db->escape($block['link'])  ."'");
         }
 
         $this->cache->delete('custom_menu_items_blocks');
@@ -98,8 +98,10 @@ class ModelExtensionModuleCustomMenuNik extends Model {
 
     public function deleteMenuItem($menu_item_id) {
         $this->db->query("DELETE FROM " . DB_PREFIX . "custom_menu_items WHERE `id` = '" . (int)$menu_item_id . "'");
+        $this->db->query("DELETE FROM " . DB_PREFIX . "custom_menu_items_blocks WHERE `menu_item_id` = '" . (int)$menu_item_id . "'");
 
         $this->cache->delete('custom_menu_items');
+        $this->cache->delete('custom_menu_items_blocks');
     }
 
     public function getMenuItem($menu_item_id) {
