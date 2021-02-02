@@ -312,8 +312,35 @@ class ControllerExtensionModuleCustomMenuNik extends Controller {
                 $results['menu_items'] = $menu_items;
             }
 
+            $menu_items_blocks = $this->model_extension_module_custom_menu_nik->getMenuItemBlocks($this->request->get['menu_item_id']);
+
+            $json = array();
+
+            foreach ($menu_items_blocks as $menu_items_block) {
+                $json[$menu_items_block['block_id']][] = $menu_items_block;
+            }
+
+            $results['menu_items_blocks'] = $json;
+
             $this->response->addHeader('Content-Type: application/json');
             $this->response->setOutput(json_encode($results));
+        }
+    }
+
+    public function getMenuItemBlocks() {
+        if(isset($this->request->get['menu_item_id']) && $this->request->server['REQUEST_METHOD'] == 'GET') {
+            $this->load->model('extension/module/custom_menu_nik');
+
+            $menu_items_blocks = $this->model_extension_module_custom_menu_nik->getMenuItemBlocks($this->request->get['menu_item_id']);
+
+            $json = array();
+
+            foreach ($menu_items_blocks as $menu_items_block) {
+                $json[$menu_items_block['block_id']][] = $menu_items_block;
+            }
+
+            $this->response->addHeader('Content-Type: application/json');
+            $this->response->setOutput(json_encode($json));
         }
     }
 
@@ -368,11 +395,11 @@ class ControllerExtensionModuleCustomMenuNik extends Controller {
         }
     }
 
-    public function getMenuItemBlocks() {
-        if(isset($this->request->get['menu_item_id']) && $this->request->server['REQUEST_METHOD'] == 'GET') {
+    public function getMenuItemBlock() {
+        if(isset($this->request->get['menu_item_id']) && isset($this->request->get['block_id']) && $this->request->server['REQUEST_METHOD'] == 'GET') {
             $this->load->model('extension/module/custom_menu_nik');
 
-            $results = $this->model_extension_module_custom_menu_nik->getMenuItemBlocks($this->request->get['menu_item_id']);
+            $results = $this->model_extension_module_custom_menu_nik->getMenuItemBlock($this->request->get['menu_item_id'], $this->request->get['block_id']);
 
             $json = array();
 
@@ -380,14 +407,24 @@ class ControllerExtensionModuleCustomMenuNik extends Controller {
             $this->load->model('catalog/category');
 
             foreach ($results as $k => $result) {
+
                 if($result['article_id']) {
                     $article = $this->model_catalog_information->getInformationDescriptions($result['article_id']);
                     $json[] = array(
                         'id'   => $result['id'],
                         'name' => $article[(int)$this->config->get('config_language_id')]['title']
-                  );
+                    );
+                } else if($result['category_id']) {
+                    //asd
+                    $category = $this->model_catalog_category->getCategoryDescriptions($result['category_id']);
+                    $json[] = array(
+                        'id'   => $result['id'],
+                        'name' => $category[(int)$this->config->get('config_language_id')]['name']
+                    );
                 }
             }
+
+//            var_dump($json);
 
             $this->response->addHeader('Content-Type: application/json');
             $this->response->setOutput(json_encode($json));
@@ -395,24 +432,23 @@ class ControllerExtensionModuleCustomMenuNik extends Controller {
     }
 
     public function addMenuItemBlock() {
-        if(isset($this->request->get['menu_item_id']) && $this->request->server['REQUEST_METHOD'] == 'GET') {
-
+        if(isset($this->request->get['menu_item_id']) && isset($this->request->get['block_id']) && $this->request->server['REQUEST_METHOD'] == 'GET') {
             if(isset($this->request->get['article_id'])) {
                 $this->load->model('extension/module/custom_menu_nik');
 
-                $this->model_extension_module_custom_menu_nik->addMenuItemBlock($this->request->get['menu_item_id'], 'article', $this->request->get['article_id']);
+                $this->model_extension_module_custom_menu_nik->addMenuItemBlock($this->request->get['menu_item_id'], $this->request->get['block_id'], 'article', $this->request->get['article_id']);
 
                 $this->response->setOutput('success');
             } elseif(isset($this->request->get['category_id'])) {
                 $this->load->model('extension/module/custom_menu_nik');
 
-                $this->model_extension_module_custom_menu_nik->addMenuItemBlock($this->request->get['menu_item_id'], 'category', $this->request->get['category_id']);
+                $this->model_extension_module_custom_menu_nik->addMenuItemBlock($this->request->get['menu_item_id'], $this->request->get['block_id'], 'category', $this->request->get['category_id']);
 
                 $this->response->setOutput('success');
             } elseif(isset($this->request->get['module_id'])) {
                 $this->load->model('extension/module/custom_menu_nik');
 
-                $this->model_extension_module_custom_menu_nik->addMenuItemBlock($this->request->get['menu_item_id'], 'module', $this->request->get['module_id']);
+                $this->model_extension_module_custom_menu_nik->addMenuItemBlock($this->request->get['menu_item_id'], $this->request->get['block_id'], 'module', $this->request->get['module_id']);
 
                 $this->response->setOutput('success');
             }
@@ -424,6 +460,16 @@ class ControllerExtensionModuleCustomMenuNik extends Controller {
             $this->load->model('extension/module/custom_menu_nik');
 
             $this->model_extension_module_custom_menu_nik->deleteMenuItemBlock($this->request->get['menu_item_block_id']);
+
+            $this->response->setOutput('success');
+        }
+    }
+
+    public function deleteMenuItemBlocks() {
+        if(isset($this->request->get['block_id']) && $this->request->server['REQUEST_METHOD'] == 'GET') {
+            $this->load->model('extension/module/custom_menu_nik');
+
+            $this->model_extension_module_custom_menu_nik->deleteMenuItemBlocks($this->request->get['block_id']);
 
             $this->response->setOutput('success');
         }

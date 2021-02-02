@@ -1,6 +1,5 @@
 <?php
-class ModelExtensionModuleCustomMenuNik extends Model
-{
+class ModelExtensionModuleCustomMenuNik extends Model {
     public function install() {
         $this->log('Installing module');
         $this->db->query("CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "custom_menu_items` (
@@ -18,6 +17,7 @@ class ModelExtensionModuleCustomMenuNik extends Model
         $this->db->query("CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "custom_menu_items_blocks` (
 			`id` INT(11) NOT NULL AUTO_INCREMENT,
 			`menu_item_id` INT(11) NOT NULL,
+			`block_id` INT(11) NOT NULL,
 			`article_id` INT(11) DEFAULT NULL,
 			`category_id` INT(11) DEFAULT NULL,
 			`external_link_name` varchar(50) DEFAULT NULL,
@@ -40,15 +40,21 @@ class ModelExtensionModuleCustomMenuNik extends Model
         return $query->rows;
     }
 
-    public function addMenuItemBlock($menu_item_id, $block_type, $block) {
+    public function getMenuItemBlock($menu_item_id, $block_id) {
+        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "custom_menu_items_blocks WHERE `menu_item_id` = '" . (int)$menu_item_id . "' AND `block_id` = '" . (int)$block_id . "'");
+
+        return $query->rows;
+    }
+
+    public function addMenuItemBlock($menu_item_id, $block_id, $block_type, $block) {
         if($block_type == 'article') {
-            $this->db->query("INSERT INTO " . DB_PREFIX . "custom_menu_items_blocks SET `menu_item_id` = '" . (int)$menu_item_id . "', `article_id` = '" . (int)$block ."'");
+            $this->db->query("INSERT INTO " . DB_PREFIX . "custom_menu_items_blocks SET `menu_item_id` = '" . (int)$menu_item_id . "', `block_id` = '" . (int)$block_id ."', `article_id` = '" . (int)$block ."'");
         } elseif($block_type == 'category') {
-            $this->db->query("INSERT INTO " . DB_PREFIX . "custom_menu_items_blocks SET `menu_item_id` = '" . (int)$menu_item_id . "', `category_id` = '" . (int)$block ."'");
+            $this->db->query("INSERT INTO " . DB_PREFIX . "custom_menu_items_blocks SET `menu_item_id` = '" . (int)$menu_item_id . "', `block_id` = '" . (int)$block_id ."', `category_id` = '" . (int)$block ."'");
         } elseif($block_type == 'module') {
-            $this->db->query("INSERT INTO " . DB_PREFIX . "custom_menu_items_blocks SET `menu_item_id` = '" . (int)$menu_item_id . "', `module_id` = '" . (int)$block ."'");
+            $this->db->query("INSERT INTO " . DB_PREFIX . "custom_menu_items_blocks SET `menu_item_id` = '" . (int)$menu_item_id . "', `block_id` = '" . (int)$block_id ."', `module_id` = '" . (int)$block ."'");
         } else {
-            $this->db->query("INSERT INTO " . DB_PREFIX . "custom_menu_items_blocks SET `menu_item_id` = '" . (int)$menu_item_id . "', `external_link_name` = '" . $block['name']  ."', `external_link_name` = '" . $block['link']  ."'");
+            $this->db->query("INSERT INTO " . DB_PREFIX . "custom_menu_items_blocks SET `menu_item_id` = '" . (int)$menu_item_id . "', `block_id` = '" . (int)$block_id ."', `external_link_name` = '" . $block['name']  ."', `external_link_name` = '" . $block['link']  ."'");
         }
 
         $this->cache->delete('custom_menu_items_blocks');
@@ -56,6 +62,12 @@ class ModelExtensionModuleCustomMenuNik extends Model
 
     public function deleteMenuItemBlock($menu_item_block_id) {
         $this->db->query("DELETE FROM " . DB_PREFIX . "custom_menu_items_blocks WHERE `id` = '" . (int)$menu_item_block_id . "'");
+
+        $this->cache->delete('custom_menu_items_blocks');
+    }
+
+    public function deleteMenuItemBlocks($block_id) {
+        $this->db->query("DELETE FROM " . DB_PREFIX . "custom_menu_items_blocks WHERE `block_id` = '" . (int)$block_id . "'");
 
         $this->cache->delete('custom_menu_items_blocks');
     }
@@ -91,7 +103,7 @@ class ModelExtensionModuleCustomMenuNik extends Model
     }
 
     public function getMenuItem($menu_item_id) {
-        $query = $this->db->query("SELECT DISTINCT * FROM " . DB_PREFIX . "custom_menu_items WHERE `id` = '" . (int)$menu_item_id . "'");
+        $query = $this->db->query("SELECT DISTINCT * FROM " . DB_PREFIX . "custom_menu_items WHERE `id` = '" . (int)$menu_item_id . "'"); //cmi LEFT JOIN " . DB_PREFIX . "custom_menu_items_blocks cmib ON (cmi.id = cmib.menu_item_id)
 
         return $query->row;
     }
