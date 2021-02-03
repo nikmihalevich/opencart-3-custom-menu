@@ -1,4 +1,4 @@
-{% if setting.menu_type == "0" %}
+{% if setting.type_menu == "0" %}
   <style>
     .horizontal-menu {
       width: 100%;
@@ -8,9 +8,11 @@
       list-style: none;
       margin: 0;
       padding: 0;
+
     }
     .topmenu {
       position: relative;
+      display: flex;
     }
     .topmenu > li {
       display: inline-block;
@@ -21,10 +23,11 @@
     }
     .horizontal-menu a {
       display: block;
-      padding: 10px 15px;
+      padding: 10px 10px;
       text-decoration: none;
       outline: none;
       transition: .5s linear;
+      text-align: center;
     }
     .horizontal-menu .fa {
       color: inherit;
@@ -42,13 +45,17 @@
       transition: 0.5s ease-in-out;
       background-color: #e6e6e6;
     }
+    .submenu > li {
+    }
     .submenu > li > a {
       background-color: #fff;
-      height: 100px;
+      border: 1px solid #e3e3e3;
     }
     .horizontal-menu .topmenu li {
       border: 1px solid #e3e3e3;
-      padding: 0 60px;
+    }
+    .topmenu-item {
+      width: 100%;
     }
     .horizontal-menu ul a {
       color: #695753;
@@ -62,8 +69,32 @@
   <nav class="horizontal-menu">
     <ul class="topmenu">
       {% for item in menu %}
-        <li class="{{ item.class }}" data-img="{{ item.thumb }}"><a href="{{ item.link }}">{{ item.name }}</a></li>
+        <li class="topmenu-item {{ item.class }}" data-img="{{ item.thumb }}">
+          <a href="{{ item.link }}">{{ item.name }} {% if item.blocks %}<i class="fa fa-angle-down"></i>{% endif %}</a>
+          {% if item.blocks %}
+            <ul class="submenu">
+              {% for i in 1..8  %}
+                {% if item.blocks[i] %}
+                  <li class="col-sm-3">
+                    {% for block in item.blocks[i] %}
+                      {% if block.link_name %}
+                        <a href="{{ block.link }}">
+                          {{ block.link_name }}
+                        </a>
+                      {% elseif block.module %}
+
+                        {{ block.module }}
+
+                      {% endif %}
+                    {% endfor %}
+                  </li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </li>
       {% endfor %}
+
     </ul>
   </nav>
 
@@ -84,10 +115,208 @@
           $(this).find('ul.submenu').toggle();
 
       });
+      $('.submenu a').on('click', function () {
+          document.location.href = $(this).attr('href')
+      })
   </script>
 
-{% elseif setting.menu_type == "1" %}
+{% elseif setting.type_menu == "1" %}
 
-{% else %}
+  <style>
+    .sidenav {
+      height: 100%;
+      z-index: 1;
+      margin-bottom: 80px;
+    }
+
+    .sidenav span, .dropdown-btn {
+      padding: 6px 8px 6px 16px;
+      text-decoration: none;
+      font-size: 20px;
+      color: black;
+      display: block;
+      background: none;
+      text-align: left;
+      cursor: pointer;
+      outline: none;
+      border: 1px solid #e3e3e3;
+      margin: 5px;
+      width: -webkit-fill-available;
+    }
+
+    .sidenav a {
+      text-decoration: none;
+      color: black;
+    }
+
+    .active {
+      background-color: #EEEEEE;
+    }
+
+    .sidenav .dropdown-container {
+      display: none;
+    }
+  </style>
+
+  {% macro list(items, step = 1) %}
+    {% import _self as tree %}
+
+    {% for item in items %}
+      {% if not item.children  %}
+        <span data-img="{{ item.thumb }}" class="{{ item.class }}"><a href="{{ item.link }}">{{ item.name }}</a></span>
+      {% elseif item.children %}
+
+        <button type="button" data-img="{{ item.thumb }}" class="dropdown-btn {{ item.class }}">
+          <a href="{{ item.link }}">{{ item.name }}</a>
+          <i class="fa fa-caret-down pull-right"></i>
+        </button>
+        <div class="dropdown-container" style="margin-left: {{ step * 40 }}px;">
+          {{ tree.list(item.children, step + 1) }}
+        </div>
+      {% endif %}
+    {% endfor %}
+  {% endmacro %}
+
+  <div class="sidenav">
+    {{ _self.list(menu) }}
+  </div>
+
+  <script type="text/javascript">
+      var dropdown = document.getElementsByClassName("dropdown-btn");
+      var i;
+
+      for (i = 0; i < dropdown.length; i++) {
+          dropdown[i].addEventListener("click", function() {
+              this.classList.toggle("active");
+              var dropdownContent = this.nextElementSibling;
+              if (dropdownContent.style.display === "block") {
+                  dropdownContent.style.display = "none";
+              } else {
+                  dropdownContent.style.display = "block";
+              }
+          });
+      }
+  </script>
+
+{% elseif setting.type_menu == "2" %}
+
+  <style>
+    .sidenav-other {
+      height: 100%;
+      width: 50%;
+      z-index: 1;
+      position: relative;
+    }
+
+    .sidenav-other span, .dropdown-btn-other {
+      padding: 6px 8px 6px 16px;
+      text-decoration: none;
+      font-size: 20px;
+      color: black;
+      display: block;
+      background: none;
+      text-align: left;
+      cursor: pointer;
+      outline: none;
+      border: 1px solid #e3e3e3;
+      margin: 5px;
+      width: 290px;
+    }
+
+
+    .active {
+      background-color: #EEEEEE;
+    }
+
+    .sidenav-other .dropdown-container {
+      display: none;
+      position: absolute;
+      border: 1px solid #e3e3e3;
+      width: 97%;
+      padding: 5px;
+      height: fit-content;
+      right: -50%;
+      background-color: lightgray;
+    }
+
+    .dropdown-container-inner {
+      min-height: 100px;
+    }
+
+    .sidenav-other .dropdown-container div {
+      padding: 3px;
+    }
+
+    .sidenav-other .dropdown-container div a {
+      color: black;
+      border: 1px solid #e3e3e3;
+      display: block;
+      margin: 0;
+      background-color: white;
+    }
+  </style>
+
+  <div class="sidenav-other">
+    {% for item in menu %}
+      {% if not item.blocks %}
+      <span class="{{ item.class }}" data-img="{{ item.thumb }}"><a href="{{ item.link }}">{{ item.name }}</a></span>
+      {% elseif item.blocks %}
+        <button type="button" class="dropdown-btn-other">
+          {{ item.name }}
+          <i class="fa fa-caret-right pull-right"></i>
+        </button>
+        <div class="dropdown-container" style="top: 42px;">
+          {% for i in 1..8  %}
+            {% if item.blocks[i] %}
+              <div class="col-sm-4">
+                <div class="dropdown-container-inner">
+                {% for block in item.blocks[i] %}
+                  {% if block.link_name %}
+                    <a href="{{ block.link }}">
+                      {{ block.link_name }}
+                    </a>
+                  {% elseif block.module %}
+
+                    {{ block.module }}
+
+                  {% endif %}
+                {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+      </li>
+    {% endfor %}
+  </div>
+
+  <script type="text/javascript">
+      var dropdownOther = document.getElementsByClassName("dropdown-btn-other");
+      var j;
+
+      for (j = 0; j < dropdownOther.length; j++) {
+          let temp = j;
+          dropdownOther[j].addEventListener("click", function() {
+              this.classList.toggle("active");
+
+              var dropdownContent = this.nextElementSibling;
+              if (dropdownContent.style.display === "block") {
+                  dropdownContent.style.display = "none";
+              } else {
+                  dropdownContent.style.display = "block";
+                  for (let q = 0; q < dropdownOther.length; q++) {
+                      if (q !== temp) {
+                          let a = dropdownOther[q].nextElementSibling
+                          let b = dropdownOther[q]
+                          b.classList.remove('active')
+                          a.style.display = 'none';
+
+                      }
+                  }
+              }
+          });
+      }
+  </script>
 
 {% endif %}

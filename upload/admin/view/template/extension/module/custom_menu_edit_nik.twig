@@ -230,7 +230,7 @@
                             </button>
                           </div>
 
-                        {% if menu_type != '1' %}
+                        {% if type_menu != '1' %}
 
                           <div class="inner-blocks-placeholder" id="inner-blocks-placeholder{{ language.language_id }}">
                             {{text_create_menu_item_before_add_blocks}}
@@ -367,7 +367,7 @@
                   </div>
                   <div class="form-group">
                     <label class="control-label" for="input-name">{{ entry_link_menu_item }}</label>
-                    <input type="text" name="external_link" value="" placeholder="{{ entry_link_menu_item}} id="input-menu-item-link" class="form-control" />
+                    <input type="text" name="external_link" value="" placeholder="{{ entry_link_menu_item}}" id="input-menu-item-link" class="form-control" />
                   </div>
                   <div class="add-edit-menu-item-external-link" style="display: flex; justify-content:center;">
                     <button type="button" class="btn menu-item-btn add-external-link-btn">{{button_add_item}}</button>
@@ -788,6 +788,7 @@
             let imgPlaceholder = imgThumb.data('placeholder')
             imgThumb.attr('src', imgPlaceholder)
         })
+        $('.save-menu-item').removeAttr('data-menu-item-id')
     }
 
     async function getSelectItems() {

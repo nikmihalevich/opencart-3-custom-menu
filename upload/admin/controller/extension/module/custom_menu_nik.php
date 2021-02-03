@@ -193,6 +193,10 @@ class ControllerExtensionModuleCustomMenuNik extends Controller {
 
             $tree = $this->buildTree($menu_items);
 
+//            echo "<pre>";
+//            print_r($menu_items);
+//            echo "</pre>";
+
             $data['menu_items'] = $tree;
 
             $this->load->model('localisation/language');
@@ -273,10 +277,18 @@ class ControllerExtensionModuleCustomMenuNik extends Controller {
                 $data['name'] = '';
             }
 
-            if (!empty($module_info)) {
+            if (isset($this->request->post['menu_type'])) {
+                $data['menu_type'] = $this->request->post['menu_type'];
+            } elseif (!empty($module_info)) {
                 $data['menu_type'] = $module_info['menu_type'];
             } else {
                 $data['menu_type'] = '';
+            }
+
+            if (!empty($module_info)) {
+                $data['type_menu'] = $module_info['type_menu'];
+            } else {
+                $data['type_menu'] = '';
             }
 
             if (isset($this->request->post['status'])) {
