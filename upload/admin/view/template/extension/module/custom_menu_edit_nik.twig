@@ -53,7 +53,20 @@
     position: relative;
   }
   .menu-item-inner-block_added p {
+    -ms-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    -ms-line-clamp: 2;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    display: -webkit-box;
+    display: box;
+    word-wrap: break-word;
+    -webkit-box-orient: vertical;
+    box-orient: vertical;
     font-size: 15px;
+    line-height: 19px;
+
   }
   .menu-item-inner-block_added .menu-item-inner-block_added__buttons {
     position: absolute;
@@ -147,6 +160,26 @@
             </div>
           </div>
           <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-name">{{ entry_menu_type }}</label>
+            <div class="col-sm-10">
+              <input type="text" disabled="disabled" name="type_menu" value="{% if type_menu == '0' %}{{ text_horizontal }}{% elseif type_menu == '1' %}{{ text_vertical }} 1{% elseif type_menu == '2' %}{{ text_vertical }} 2{% endif %}" placeholder="{{ entry_menu_type }}" id="input-name" class="form-control" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-display_type">{{ entry_display_type }}</label>
+            <div class="col-sm-10">
+              <select name="display_type" id="input-display_type" class="form-control">
+                {% if display_type %}
+                  <option value="0">{{ text_onclick }}</option>
+                  <option value="1" selected="selected">{{ text_onhover }}</option>
+                {% else %}
+                  <option value="0" selected="selected">{{ text_onclick }}</option>
+                  <option value="1">{{ text_onhover }}</option>
+                {% endif %}
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
             <div class="col-sm-3">
               <div class="menu-block">
                 <button type="button" id="create-menu-item" class="menu-item-btn">{{ button_create_menu_item }}</button>
@@ -170,7 +203,7 @@
                   <div class="tab-content">
                     {% for language in languages %}
                       <div class="tab-pane" id="language{{ language.language_id }}">
-                        <div class="form-group">
+                        <div class="form-group" {% if type_menu != '1' %}style="display: none"{% endif %}>
                           <label class="col-sm-2 control-label" for="input-menu_item_parent{{ language.language_id }}">{{ entry_parent_item }}</label>
                           <div class="col-sm-10">
                             <select name="menu_item[{{ language.language_id }}][parent_id]" id="input-menu_item_parent{{ language.language_id }}" class="form-control select_parent_id">
@@ -223,13 +256,6 @@
                           </div>
                         </div>
 
-
-                          <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
-                            <button class="menu-item-btn save-menu-item" id="save-menu-item-btn{{ language.language_id }}" type="button" form="menu-item-form">
-                              {{ button_save }}
-                            </button>
-                          </div>
-
                         {% if type_menu != '1' %}
 
                           <div class="inner-blocks-placeholder" id="inner-blocks-placeholder{{ language.language_id }}">
@@ -243,29 +269,18 @@
                             <div class="panel-body">
 
                               <div class="tab-content">
-{#                                {% for id in 1..7 %}#}
-{#                                  <div class="col-sm-3">#}
-{#                                    <div class="menu-item-inner-block" data-language-id="{{ language.language_id }}" data-block-id="{{ id }}">#}
-{#                                      <button type="button" data-toggle="modal" data-target=".add-edit-menu-modal" class="menu-item-btn">{{ button_add_menu }}</button>#}
-{#                                      <button type="button" data-toggle="modal" data-target=".add-edit-module-modal" class="menu-item-btn">{{ button_add_module }}</button>#}
-{#                                    </div>#}
-{#                                  </div>#}
-{#                                {% endfor %}#}
-{#                                <div class="col-sm-3">#}
-{#                                  <div class="menu-item-inner-block_added" data-language-id="{{ language.language_id }}">#}
-{#                                    <p>Данные блока:</p>#}
-{#                                    <p>Пункты меню</p>#}
-{#                                    <div class="menu-item-inner-block_added__buttons" data-block-id="{{ id }}">#}
-{#                                      <button type="button" data-toggle="modal" data-target=".add-edit-menu-modal" class="btn btn-primary edit-block"><i class="fa fa-pencil"></i></button>#}
-{#                                      <button type="button" class="btn btn-danger delete-block-inner-menu-item"><i class="fa fa-trash"></i></button>#}
-{#                                    </div>#}
-{#                                  </div>#}
-{#                                </div>#}
+
                               </div>
 
                             </div>
                           </div>
                         {% endif %}
+
+                        <div style="display: flex; justify-content: center; align-items: center; margin-top: 20px;">
+                          <button class="menu-item-btn save-menu-item" id="save-menu-item-btn{{ language.language_id }}" type="button" form="menu-item-form">
+                            {{ button_save }}
+                          </button>
+                        </div>
 
                       </div>
                       {% endfor %}
@@ -393,7 +408,12 @@
           </div>
         </div>
 
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ button_close }}</button>
+        </div>
       </div>
+
     </div>
   </div>
 
@@ -453,6 +473,10 @@
             </div>
 
           </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ button_close }}</button>
         </div>
 
       </div>

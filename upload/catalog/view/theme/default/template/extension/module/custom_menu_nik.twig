@@ -74,21 +74,22 @@
           {% if item.blocks %}
             <ul class="submenu">
               {% for i in 1..8  %}
-                {% if item.blocks[i] %}
                   <li class="col-sm-3">
-                    {% for block in item.blocks[i] %}
-                      {% if block.link_name %}
-                        <a href="{{ block.link }}">
-                          {{ block.link_name }}
-                        </a>
-                      {% elseif block.module %}
+                    {% if item.blocks[i] %}
+                        {% for block in item.blocks[i] %}
+                          {% if block.link_name %}
+                            <a href="{{ block.link }}">
+                              {{ block.link_name }}
+                            </a>
+                          {% elseif block.module %}
 
-                        {{ block.module }}
+                            {{ block.module }}
 
-                      {% endif %}
-                    {% endfor %}
+                          {% endif %}
+                        {% endfor %}
+                    {% endif %}
                   </li>
-                {% endif %}
+                {% if i == 4 %}<li class="row"></li>{% endif %}
               {% endfor %}
             </ul>
           {% endif %}

@@ -16,6 +16,7 @@ class ControllerExtensionModuleCustomMenuNik extends Controller {
 			    $module = $this->model_setting_module->getModule($this->request->get['module_id']);
                 $module['module_id'] = $this->request->get['module_id'];
                 $module['name'] = $this->request->post['name'];
+                $module['display_type'] = $this->request->post['display_type'];
                 $module['status'] = $this->request->post['status'];
                 $this->model_setting_module->editModule($this->request->get['module_id'], $module);
             }
@@ -283,6 +284,14 @@ class ControllerExtensionModuleCustomMenuNik extends Controller {
                 $data['menu_type'] = $module_info['menu_type'];
             } else {
                 $data['menu_type'] = '';
+            }
+
+            if (isset($this->request->post['display_type'])) {
+                $data['display_type'] = $this->request->post['display_type'];
+            } elseif (!empty($module_info)) {
+                $data['display_type'] = $module_info['display_type'];
+            } else {
+                $data['display_type'] = '';
             }
 
             if (!empty($module_info)) {

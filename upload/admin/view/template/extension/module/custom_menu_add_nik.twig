@@ -201,6 +201,20 @@
             </div>
           </div>
           <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-display_type">{{ entry_display_type }}</label>
+            <div class="col-sm-10">
+              <select name="display_type" id="input-display_type" class="form-control">
+                {% if display_type %}
+                  <option value="0">{{ text_onclick }}</option>
+                  <option value="1" selected="selected">{{ text_onhover }}</option>
+                {% else %}
+                  <option value="0" selected="selected">{{ text_onclick }}</option>
+                  <option value="1">{{ text_onhover }}</option>
+                {% endif %}
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
             <label class="col-sm-2 control-label" for="input-width">{{ entry_menu_view }}</label>
 
             <select name="type_menu" style="display: none" id="select-type_menu">
@@ -453,6 +467,64 @@
       </div>
     </div>
   </div>
+
+  <div class="modal fade" id="selectedFirstTypeMenu" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">{{ entry_menu_view }}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          {{ text_selected_type_menu_1 }}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ button_close }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="selectedSecondTypeMenu" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">{{ entry_menu_view }}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          {{ text_selected_type_menu_2 }}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ button_close }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="selectedThirdTypeMenu" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">{{ entry_menu_view }}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          {{ text_selected_type_menu_3 }}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ button_close }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script type="text/javascript">
 
     $(".horizontal-menu li ul").hide(); // скрываем выпадающее меню
@@ -537,14 +609,17 @@
 
       $('#select_horizontal_menu').on('click', function () {
           $('select[name="type_menu"] option[value="0"]').prop('selected', 'selected')
+          $('#selectedFirstTypeMenu').modal('show')
       })
 
       $('#select_vertical_menu_1').on('click', function () {
           $('select[name="type_menu"] option[value="1"]').prop('selected', 'selected')
+          $('#selectedSecondTypeMenu').modal('show')
       })
 
       $('#select_vertical_menu_2').on('click', function () {
           $('select[name="type_menu"] option[value="2"]').prop('selected', 'selected')
+          $('#selectedThirdTypeMenu').modal('show')
       })
 
 })
