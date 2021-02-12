@@ -529,20 +529,29 @@ class ControllerExtensionModuleCustomMenuNik extends Controller {
             if(isset($this->request->get['article_id'])) {
                 $this->load->model('extension/module/custom_menu_nik');
 
-                $this->model_extension_module_custom_menu_nik->addMenuItemBlock($this->request->get['menu_item_id'], $this->request->get['block_id'], 'article', $this->request->get['article_id']);
+                $menuItemBlock = $this->model_extension_module_custom_menu_nik->hasMenuItemBlock($this->request->get['menu_item_id'], $this->request->get['block_id'], 'article', $this->request->get['article_id']);
 
+                if (empty($menuItemBlock)) {
+                    $this->model_extension_module_custom_menu_nik->addMenuItemBlock($this->request->get['menu_item_id'], $this->request->get['block_id'], 'article', $this->request->get['article_id']);
+                }
                 $this->response->setOutput('success');
             } elseif(isset($this->request->get['category_id'])) {
                 $this->load->model('extension/module/custom_menu_nik');
 
-                $this->model_extension_module_custom_menu_nik->addMenuItemBlock($this->request->get['menu_item_id'], $this->request->get['block_id'], 'category', $this->request->get['category_id']);
+                $menuItemBlock = $this->model_extension_module_custom_menu_nik->hasMenuItemBlock($this->request->get['menu_item_id'], $this->request->get['block_id'], 'category', $this->request->get['category_id']);
 
+                if (empty($menuItemBlock)) {
+                    $this->model_extension_module_custom_menu_nik->addMenuItemBlock($this->request->get['menu_item_id'], $this->request->get['block_id'], 'category', $this->request->get['category_id']);
+                }
                 $this->response->setOutput('success');
             } elseif(isset($this->request->get['module_code'])) {
                 $this->load->model('extension/module/custom_menu_nik');
 
-                $this->model_extension_module_custom_menu_nik->addMenuItemBlock($this->request->get['menu_item_id'], $this->request->get['block_id'], 'module', $this->request->get['module_code']);
+                $menuItemBlock = $this->model_extension_module_custom_menu_nik->hasMenuItemBlock($this->request->get['menu_item_id'], $this->request->get['block_id'], 'module', $this->request->get['module_code']);
 
+                if (empty($menuItemBlock)) {
+                    $this->model_extension_module_custom_menu_nik->addMenuItemBlock($this->request->get['menu_item_id'], $this->request->get['block_id'], 'module', $this->request->get['module_code']);
+                }
                 $this->response->setOutput('success');
             } elseif(isset($this->request->get['link_name'])) {
                 $this->load->model('extension/module/custom_menu_nik');

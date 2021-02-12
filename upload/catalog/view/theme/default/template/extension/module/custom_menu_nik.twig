@@ -1,125 +1,65 @@
 {% if setting.type_menu == "0" %}
   <style>
-    .horizontal-menu {
-      width: 100%;
-      margin: 0 auto 30px;
-    }
-    .horizontal-menu ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-
-    }
-    .topmenu {
-      position: relative;
-      display: flex;
-    }
-    .topmenu > li {
-      display: inline-block;
-      position: static;
-    }
-    .topmenu > li:last-child {
-      margin-right: 0;
-    }
-    .horizontal-menu a {
-      display: block;
-      padding: 10px 10px;
-      text-decoration: none;
-      outline: none;
-      transition: .5s linear;
-      text-align: center;
-    }
-    .horizontal-menu .fa {
-      color: inherit;
-      padding-left: 10px;
-    }
-    .submenu {
-      position: absolute;
-      top: 115%;
-      left: 0;
-      width: 100%;
-      z-index: 10;
-      -webkit-transition: 0.5s ease-in-out;
-      -moz-transition: 0.5s ease-in-out;
-      -o-transition: 0.5s ease-in-out;
-      transition: 0.5s ease-in-out;
-      background-color: #e6e6e6;
-    }
-    .submenu > li {
-    }
-    .submenu > li > a {
-      background-color: #fff;
-      border: 1px solid #e3e3e3;
-    }
-    .horizontal-menu .topmenu li {
-      border: 1px solid #e3e3e3;
-    }
-    .topmenu-item {
-      width: 100%;
-    }
-    .horizontal-menu ul a {
-      color: #695753;
-    }
-    .horizontal-menu .submenu li {
-      padding: 3px 7px;
-      border: none;
+    #menu .dropdown-inner a {
+      min-width: 0 !important;
     }
   </style>
+    <nav id="menu" class="navbar">
+      <div class="navbar-header"><span id="category" class="visible-xs">{{ setting.name }}</span>
+        <button type="button" class="btn btn-navbar navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse"><i class="fa fa-bars"></i></button>
+      </div>
+      <div class="collapse navbar-collapse navbar-ex1-collapse">
 
-  <nav class="horizontal-menu">
-    <ul class="topmenu">
-      {% for item in menu %}
-        <li class="topmenu-item {{ item.class }}" data-img="{{ item.thumb }}">
-          <a href="{{ item.link }}">{{ item.name }} {% if item.blocks %}<i class="fa fa-angle-down"></i>{% endif %}</a>
-          {% if item.blocks %}
-            <ul class="submenu">
-              {% for i in 1..8  %}
-                  <li class="col-sm-3">
-                    {% if item.blocks[i] %}
-                        {% for block in item.blocks[i] %}
-                          {% if block.link_name %}
-                            <a href="{{ block.link }}">
-                              {{ block.link_name }}
-                            </a>
-                          {% elseif block.module %}
-
-                            {{ block.module }}
-
+        <ul class="nav navbar-nav" style="width: 100%;">
+          {% for item in menu %}
+            {% if item.blocks %}
+              <li class="{% if setting.display_type != '0' %}dropdown {% endif %}{{ item.class }}" data-img="{{ item.thumb }}"><a href="{{ item.link }}" class="dropdown-toggle" data-toggle="dropdown">{{ item.name }}</a>
+                <div class="dropdown-menu">
+                  <div class="dropdown-inner">
+                      <ul class="list-unstyled" style="display: flex; flex-direction: column">
+                        {% for j in 1..2 %}
+                          {% if j == 1 %}
+                            {% set counterStart = 1 %}
+                            {% set counterEnd = 4 %}
+                          {% elseif j == 2 %}
+                            {% set counterStart = 5 %}
+                            {% set counterEnd = 8 %}
                           {% endif %}
+
+                          <div class="row" style="display: flex; margin: 5px 0;">
+                            {% for i in counterStart..counterEnd  %}
+                              <li class="col-xs-3">
+                                {% if item.blocks[i] %}
+                                  {% for block in item.blocks[i] %}
+                                    {% if block.link_name %}
+
+                                      <a href="{{ block.link }}">
+                                        {{ block.link_name }}
+                                      </a>
+
+                                    {% elseif block.module %}
+
+                                      {{ block.module }}
+
+                                    {% endif %}
+                                  {% endfor %}
+                                {% endif %}
+                              </li>
+                            {% endfor %}
+                          </div>
                         {% endfor %}
-                    {% endif %}
-                  </li>
-                {% if i == 4 %}<li class="row"></li>{% endif %}
-              {% endfor %}
-            </ul>
-          {% endif %}
-        </li>
-      {% endfor %}
+                      </ul>
+                  </div>
+                  <a href="{{ item.link }}" class="see-all">{{ text_all }} {{ item.name }}</a> </div>
+              </li>
+            {% else %}
+              <li class="{{ item.class }}" data-img="{{ item.thumb }}"><a href="{{ item.link }}">{{ item.name }}</a></li>
+            {% endif %}
+          {% endfor %}
+        </ul>
 
-    </ul>
-  </nav>
-
-
-  <script type="text/javascript">
-      $(".horizontal-menu li ul").hide(); // скрываем выпадающее меню
-      /* отбираем элемент списка, который содержит элемент с классом .submenu и добавляем ему функцию при наведении, которая показывает и скрывает выпадающее меню */
-      $(".horizontal-menu li:has('.submenu')").on('click', function(e){
-          e.preventDefault();
-          let submenus = $('.submenu');
-          for (let t = 0; t < submenus.length; t++) {
-              if($(this).find('ul.submenu')[0] !== submenus[t]) {
-                  submenus[t].style.display = 'none';
-                  submenus[t].parentNode.classList.remove('active')
-              }
-          }
-          $(this).toggleClass('active')
-          $(this).find('ul.submenu').toggle();
-
-      });
-      $('.submenu a').on('click', function () {
-          document.location.href = $(this).attr('href')
-      })
-  </script>
+      </div>
+    </nav>
 
 {% elseif setting.type_menu == "1" %}
 
@@ -141,7 +81,7 @@
       cursor: pointer;
       outline: none;
       border: 1px solid #e3e3e3;
-      margin: 5px;
+      margin: 5px 0;
       width: -webkit-fill-available;
     }
 
@@ -171,7 +111,7 @@
           <a href="{{ item.link }}">{{ item.name }}</a>
           <i class="fa fa-caret-down pull-right"></i>
         </button>
-        <div class="dropdown-container" style="margin-left: {{ step * 40 }}px;">
+        <div class="dropdown-container" style="margin-left: 20px;">
           {{ tree.list(item.children, step + 1) }}
         </div>
       {% endif %}
@@ -204,7 +144,7 @@
   <style>
     .sidenav-other {
       height: 100%;
-      width: 50%;
+      width: 100%;
       z-index: 1;
       position: relative;
     }
@@ -221,39 +161,50 @@
       outline: none;
       border: 1px solid #e3e3e3;
       margin: 5px;
-      width: 290px;
+      width: 100%;
     }
 
+    .dropdown-btn-other .fa {
+      padding: 3px 8px;
+    }
+
+    .dropdown-arrow {
+      padding: 3px 8px;
+    }
 
     .active {
-      background-color: #EEEEEE;
+      background-color: #EEEEEE !important;
     }
 
     .sidenav-other .dropdown-container {
       display: none;
       position: absolute;
       border: 1px solid #e3e3e3;
-      width: 97%;
+      width: 555px;
       padding: 5px;
       height: fit-content;
-      right: -50%;
+      left: 105%;
       background-color: lightgray;
+    }
+
+    .dropdown-container-row {
+      display: flex;
     }
 
     .dropdown-container-inner {
       min-height: 100px;
     }
 
-    .sidenav-other .dropdown-container div {
-      padding: 3px;
+    .dropdown-container-inner a {
+      padding: 7px;
+      color: black;
+      display: block;
+      background-color: whitesmoke;
+      margin-bottom: 1px;
     }
 
-    .sidenav-other .dropdown-container div a {
-      color: black;
-      border: 1px solid #e3e3e3;
-      display: block;
-      margin: 0;
-      background-color: white;
+    .sidenav-other .dropdown-container div {
+      padding: 3px;
     }
   </style>
 
@@ -262,29 +213,54 @@
       {% if not item.blocks %}
       <span class="{{ item.class }}" data-img="{{ item.thumb }}"><a href="{{ item.link }}">{{ item.name }}</a></span>
       {% elseif item.blocks %}
-        <button type="button" class="dropdown-btn-other">
-          {{ item.name }}
-          <i class="fa fa-caret-right pull-right"></i>
-        </button>
+        {% if item.link %}
+          <span class="{{ item.class }}" data-img="{{ item.thumb }}">
+            <div>
+              <a href="{{ item.link }}">{{ item.name }}</a>
+              <i class="fa fa-caret-right pull-right dropdown-arrow"></i>
+            </div>
+          </span>
+        {% else %}
+
+          <button type="button" class="dropdown-btn-other">
+            {{ item.name }}
+            <i class="fa fa-caret-right pull-right"></i>
+          </button>
+
+        {% endif %}
+
         <div class="dropdown-container" style="top: 42px;">
-          {% for i in 1..8  %}
-            {% if item.blocks[i] %}
-              <div class="col-sm-4">
-                <div class="dropdown-container-inner">
-                {% for block in item.blocks[i] %}
-                  {% if block.link_name %}
-                    <a href="{{ block.link }}">
-                      {{ block.link_name }}
-                    </a>
-                  {% elseif block.module %}
-
-                    {{ block.module }}
-
-                  {% endif %}
-                {% endfor %}
-                </div>
-              </div>
+          {% for j in 1..2 %}
+            {% if j == 1 %}
+              {% set counterStart = 1 %}
+              {% set counterEnd = 4 %}
+            {% elseif j == 2 %}
+              {% set counterStart = 5 %}
+              {% set counterEnd = 8 %}
             {% endif %}
+            <div class="dropdown-container-row">
+            {% for i in counterStart..counterEnd  %}
+
+                <div class="col-sm-4">
+                  <div class="dropdown-container-inner">
+                    {% if item.blocks[i] %}
+                      {% for block in item.blocks[i] %}
+                        {% if block.link_name %}
+                          <a href="{{ block.link }}">
+                            {{ block.link_name }}
+                          </a>
+                        {% elseif block.module %}
+
+                          {{ block.module }}
+
+                        {% endif %}
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                </div>
+
+            {% endfor %}
+            </div>
           {% endfor %}
         </div>
       {% endif %}
@@ -293,28 +269,36 @@
   </div>
 
   <script type="text/javascript">
-      var dropdownOther = document.getElementsByClassName("dropdown-btn-other");
+      var dropdownOther = document.getElementsByClassName("dropdown-arrow");
       var j;
 
       for (j = 0; j < dropdownOther.length; j++) {
           let temp = j;
           dropdownOther[j].addEventListener("click", function() {
-              this.classList.toggle("active");
+              let span = $(this).parents('span')
 
+              var dropdownContent = span.next();
+              if ($(dropdownContent).is(":visible")) {
+                  dropdownContent.hide()
+              } else {
+                  dropdownContent.show()
+                  // hide other blocks
+              }
+              span.toggleClass('active')
+          });
+      }
+
+      var dropdown = document.getElementsByClassName("dropdown-btn-other");
+      for (let k = 0; k < dropdown.length; k++) {
+          let temp = k;
+          dropdown[k].addEventListener("click", function() {
+              this.classList.toggle("active");
               var dropdownContent = this.nextElementSibling;
               if (dropdownContent.style.display === "block") {
                   dropdownContent.style.display = "none";
               } else {
                   dropdownContent.style.display = "block";
-                  for (let q = 0; q < dropdownOther.length; q++) {
-                      if (q !== temp) {
-                          let a = dropdownOther[q].nextElementSibling
-                          let b = dropdownOther[q]
-                          b.classList.remove('active')
-                          a.style.display = 'none';
-
-                      }
-                  }
+                  // hide other blocks
               }
           });
       }

@@ -41,9 +41,21 @@ class ModelExtensionModuleCustomMenuNik extends Model {
     }
 
     public function getMenuItemBlock($menu_item_id, $block_id) {
-        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "custom_menu_items_blocks WHERE `menu_item_id` = '" . (int)$menu_item_id . "' AND `block_id` = '" . (int)$block_id . "'");
+        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "custom_menu_items_blocks WHERE `menu_item_id` = '" . (int)$menu_item_id . "' AND `block_id` = '" . (int)$block_id . "' ORDER BY `id` ASC");
 
         return $query->rows;
+    }
+
+    public function hasMenuItemBlock($menu_item_id, $block_id, $type, $id) {
+        $query = array();
+        if($type == 'article') {
+            $query = $this->db->query("SELECT `id` FROM " . DB_PREFIX . "custom_menu_items_blocks WHERE `menu_item_id` = '" . (int)$menu_item_id . "' AND `article_id` = '" . (int)$id ."' AND `block_id` = '" . (int)$block_id . "'");
+        } elseif($type == 'category') {
+            $query = $this->db->query("SELECT `id` FROM " . DB_PREFIX . "custom_menu_items_blocks WHERE `menu_item_id` = '" . (int)$menu_item_id . "' AND `category_id` = '" . (int)$id ."' AND `block_id` = '" . (int)$block_id . "'");
+        } elseif($type == 'module') {
+            $query = $this->db->query("SELECT `id` FROM " . DB_PREFIX . "custom_menu_items_blocks WHERE `menu_item_id` = '" . (int)$menu_item_id . "' AND `module_code` = '" . $this->db->escape($id) . "' AND `block_id` = '" . (int)$block_id . "'");
+        }
+        return $query->row;
     }
 
     public function addMenuItemBlock($menu_item_id, $block_id, $block_type, $block) {

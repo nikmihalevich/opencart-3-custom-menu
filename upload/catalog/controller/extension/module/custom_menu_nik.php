@@ -75,7 +75,6 @@ class ControllerExtensionModuleCustomMenuNik extends Controller {
                 }
             }
 
-
             $data['setting'] = $setting;
             $data['menu'] = $this->buildTree($menu);
         }
