@@ -4,6 +4,7 @@ class ModelExtensionModuleCustomMenuNik extends Model {
         $this->log('Installing module');
         $this->db->query("CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "custom_menu_items` (
 			`id` INT(11) NOT NULL AUTO_INCREMENT,
+			`menu_item_id` INT(11) NOT NULL,
 			`module_id` INT(11) NOT NULL,
 			`language_id` INT(11) NOT NULL,
 			`parent_id` INT(11) NOT NULL,
@@ -85,13 +86,24 @@ class ModelExtensionModuleCustomMenuNik extends Model {
     }
 
     public function addMenuItem($data) {
+        $canAdd = false;
         foreach ($data['menu_item'] as $language_id => $value) {
             if(!empty($value['name'])) {
-                $this->db->query("INSERT INTO " . DB_PREFIX . "custom_menu_items SET module_id = '" . (int)$data['module_id'] . "', `language_id` = '" . (int)$language_id . "', `parent_id` = '" . (int)$value['parent_id'] . "', `name` = '" . $this->db->escape($value['name']) . "', `link` = '" . $this->db->escape($value['link']) . "', `class` = '" . $this->db->escape($value['class']) . "'");
+                $canAdd = true;
             }
-            $menu_item_id = $this->db->getLastId();
-            if (isset($value['image'])) {
-                $this->db->query("UPDATE " . DB_PREFIX . "custom_menu_items SET image = '" . $this->db->escape($value['image']) . "' WHERE `id` = '" . (int)$menu_item_id . "'");
+        }
+
+        $query = $this->db->query("SELECT MAX(menu_item_id) as max_id FROM " . DB_PREFIX . "custom_menu_items");
+
+        $max_id = (int)$query->row['max_id'] + 1;
+
+        foreach ($data['menu_item'] as $language_id => $value) {
+            if($canAdd) {
+                $this->db->query("INSERT INTO " . DB_PREFIX . "custom_menu_items SET menu_item_id = '" . $max_id . "', module_id = '" . (int)$data['module_id'] . "', `language_id` = '" . (int)$language_id . "', `parent_id` = '" . (int)$value['parent_id'] . "', `name` = '" . $this->db->escape($value['name']) . "', `link` = '" . $this->db->escape($value['link']) . "', `class` = '" . $this->db->escape($value['class']) . "'");
+                $menu_item_id = $this->db->getLastId();
+                if (isset($value['image'])) {
+                    $this->db->query("UPDATE " . DB_PREFIX . "custom_menu_items SET image = '" . $this->db->escape($value['image']) . "' WHERE `id` = '" . (int)$menu_item_id . "'");
+                }
             }
         }
 
@@ -99,17 +111,19 @@ class ModelExtensionModuleCustomMenuNik extends Model {
     }
 
     public function editMenuItem($menu_item_id, $data) {
-        $this->db->query("UPDATE " . DB_PREFIX . "custom_menu_items SET `parent_id` = '" . (int)$data['parent_id'] . "', `name` = '" . $this->db->escape($data['name']) . "', `link` = '" . $this->db->escape($data['link']) . "', `class` = '" . $this->db->escape($data['class']) . "' WHERE `id` = '" . (int)$menu_item_id . "'");
+        foreach ($data as $language_id => $value) {
+            $this->db->query("UPDATE " . DB_PREFIX . "custom_menu_items SET `parent_id` = '" . (int)$value['parent_id'] . "', `name` = '" . $this->db->escape($value['name']) . "', `link` = '" . $this->db->escape($value['link']) . "', `class` = '" . $this->db->escape($value['class']) . "' WHERE `menu_item_id` = '" . (int)$menu_item_id . "' AND `language_id` = '" . (int)$language_id . "'");
 
-        if (isset($data['image'])) {
-            $this->db->query("UPDATE " . DB_PREFIX . "custom_menu_items SET image = '" . $this->db->escape($data['image']) . "' WHERE `id` = '" . (int)$menu_item_id . "'");
+            if (isset($data['image'])) {
+                $this->db->query("UPDATE " . DB_PREFIX . "custom_menu_items SET image = '" . $this->db->escape($data['image']) . "' WHERE `menu_item_id` = '" . (int)$menu_item_id . "' AND `language_id` = '" . (int)$language_id . "'");
+            }
         }
 
         $this->cache->delete('custom_menu_items');
     }
 
     public function deleteMenuItem($menu_item_id) {
-        $this->db->query("DELETE FROM " . DB_PREFIX . "custom_menu_items WHERE `id` = '" . (int)$menu_item_id . "'");
+        $this->db->query("DELETE FROM " . DB_PREFIX . "custom_menu_items WHERE `menu_item_id` = '" . (int)$menu_item_id . "'");
         $this->db->query("DELETE FROM " . DB_PREFIX . "custom_menu_items_blocks WHERE `menu_item_id` = '" . (int)$menu_item_id . "'");
 
         $this->cache->delete('custom_menu_items');
@@ -117,14 +131,26 @@ class ModelExtensionModuleCustomMenuNik extends Model {
     }
 
     public function getMenuItem($menu_item_id) {
-        $query = $this->db->query("SELECT DISTINCT * FROM " . DB_PREFIX . "custom_menu_items WHERE `id` = '" . (int)$menu_item_id . "'"); //cmi LEFT JOIN " . DB_PREFIX . "custom_menu_items_blocks cmib ON (cmi.id = cmib.menu_item_id)
+        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "custom_menu_items WHERE `menu_item_id` = '" . (int)$menu_item_id . "'"); //cmi LEFT JOIN " . DB_PREFIX . "custom_menu_items_blocks cmib ON (cmi.id = cmib.menu_item_id)
 
-        return $query->row;
+        return $query->rows;
     }
 
     public function getMenuItems($module_id) {
         if(isset($module_id)) {
             $sql = "SELECT * FROM " . DB_PREFIX . "custom_menu_items WHERE `module_id` = '" . (int)$module_id . "' AND `language_id` = '" . (int)$this->config->get('config_language_id') . "'";
+        } else {
+            $sql = "SELECT * FROM " . DB_PREFIX . "custom_menu_items WHERE `language_id` = '" . (int)$this->config->get('config_language_id') . "'";
+        }
+
+        $query = $this->db->query($sql);
+
+        return $query->rows;
+    }
+
+    public function getMenuItemsForSelect($module_id) {
+        if(isset($module_id)) {
+            $sql = "SELECT * FROM " . DB_PREFIX . "custom_menu_items WHERE `module_id` = '" . (int)$module_id . "'";
         } else {
             $sql = "SELECT * FROM " . DB_PREFIX . "custom_menu_items WHERE `language_id` = '" . (int)$this->config->get('config_language_id') . "'";
         }

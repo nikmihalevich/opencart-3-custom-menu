@@ -99,8 +99,8 @@
       <li class="menu-list-item" style="margin-left: {{ step * 25 }}px;">
         <span class="menu-list-item__inner">{{ item.name }}</span>
         <div>
-          <button type="button" data-menu-item-id="{{ item.id }}" class="btn btn-primary edit-menu-item"><i class="fa fa-pencil"></i></button>
-          <button type="button" data-menu-item-id="{{ item.id }}" class="btn btn-danger delete-menu-item"><i class="fa fa-trash"></i></button>
+          <button type="button" data-menu-item-id="{{ item.menu_item_id }}" class="btn btn-primary edit-menu-item"><i class="fa fa-pencil"></i></button>
+          <button type="button" data-menu-item-id="{{ item.menu_item_id }}" class="btn btn-danger delete-menu-item"><i class="fa fa-trash"></i></button>
         </div>
         {% if item.children %}
           {{ tree.list(item.children, step + 1) }}
@@ -724,29 +724,43 @@
     function editMenuItem() {
         $('.edit-menu-item').unbind('click');
         $('.edit-menu-item').on('click', function (e) {
+            let menuItemId = $(this).data('menu-item-id')
             $.ajax({
                 type: "GET",
-                url: "index.php?route=extension/module/custom_menu_nik/getMenuItem&user_token={{ user_token }}&menu_item_id=" + $(this).data('menu-item-id') + "&module_id={{ module_id }}",
+                url: "index.php?route=extension/module/custom_menu_nik/getMenuItem&user_token={{ user_token }}&menu_item_id=" + menuItemId + "&module_id={{ module_id }}",
                 success: function (res) {
-                    let html = selectList(res['menu_items']);
-                    $('.select_parent_id').html(html)
+                    let selectItemsKeys = Object.keys(res['menu_items'])
+                    for (let a = 0; a < selectItemsKeys.length; a++) {
+                        let selectItemsArr = res['menu_items'][selectItemsKeys[a]]
+                        let html = selectList(selectItemsArr);
+                        $( ":input[name='menu_item[" + selectItemsKeys[a] + "][parent_id]']" ).html(html)
+                    }
+
                     let keys = Object.keys(res);
                     for (let i = 0; i < keys.length; i++) {
-                        let el = $( ":input[name='menu_item[" + res['language_id'] + "][" + keys[i] + "]']" )
-                        if(el.length) {
-                            el.val(res[keys[i]])
+                        let menuItemKeys = Object.keys(res[keys[i]]);
+                        for (let j = 0; j < menuItemKeys.length; j++) {
+                            if(res[keys[i]]['language_id']) {
+                                let el = $( ":input[name='menu_item[" + res[keys[i]]['language_id'] + "][" + menuItemKeys[j] + "]']" )
+                                if(el.length) {
+                                    el.val(res[keys[i]][menuItemKeys[j]])
+                                }
+                            }
                         }
+                        $('#thumb-image' + res[keys[i]]['language_id'] + ' img').attr('src', res[keys[i]]['thumb'])
+                        $('.save-menu-item').each(function (i, item) {
+                            $(item).attr('data-menu-item-id', menuItemId)
+                        })
+                        // $('#save-menu-item-btn' + res[keys[i]]['language_id'])
+                        $('#inner-blocks-placeholder' + res[keys[i]]['language_id']).hide()
+                        $('#inner-blocks-panel' + res[keys[i]]['language_id']).show()
+
+                        let htmlBlocks = HtmlMenuItemSettingBlocks(res['menu_items_blocks']);
+                        $('#inner-blocks-panel' + res[keys[i]]['language_id']).find('.tab-content').html(htmlBlocks)
                     }
-                    let htmlBlocks = HtmlMenuItemSettingBlocks(res['menu_items_blocks']);
-                    $('#inner-blocks-panel' + res['language_id']).find('.tab-content').html(htmlBlocks)
 
                     clickAddBlock()
                     deleteBlockMenuItem()
-
-                    $('#thumb-image' + res['language_id'] + ' img').attr('src', res['thumb'])
-                    $('#save-menu-item-btn' + res['language_id']).attr('data-menu-item-id', res['id'])
-                    $('#inner-blocks-placeholder' + res['language_id']).hide()
-                    $('#inner-blocks-panel' + res['language_id']).show()
 
                     $('.create-menu-form').show();
                 }
@@ -769,6 +783,7 @@
     }
 
     $('.save-menu-item').on('click', function (e) {
+        console.log($( ":input[name*='menu_item']" ).serializeArray())
         if(!$(this).attr('data-menu-item-id')) { // add menu item
             $.ajax({
                 type: "POST",
@@ -821,8 +836,12 @@
             type: "GET",
             url: "index.php?route=extension/module/custom_menu_nik/getSelectItems&module_id={{ module_id }}&user_token={{ user_token }}",
             success: function (res) {
-                html = selectList(res);
-                $('.select_parent_id').html(html)
+                let selectItemsKeys = Object.keys(res)
+                for (let a = 0; a < selectItemsKeys.length; a++) {
+                    let selectItemsArr = res[selectItemsKeys[a]]
+                    let html = selectList(selectItemsArr);
+                    $( ":input[name='menu_item[" + selectItemsKeys[a] + "][parent_id]']" ).html(html)
+                }
 
             }
         })
@@ -831,7 +850,7 @@
     function selectList(arr) {
         let html = '<option value="0">{{ text_no }}</option>';
         for(let i = 0; i < arr.length; i++) {
-            html += '<option value="'+ arr[i].id +'">'+ arr[i].name +'</option>';
+            html += '<option value="'+ arr[i].menu_item_id +'">'+ arr[i].name +'</option>';
         }
 
         return html;
@@ -857,8 +876,8 @@
             branch += '<li class="menu-list-item" style="margin-left: ' + (step * 25) + 'px;">' +
                 '<span class="menu-list-item__inner">' + arr[i].name + '</span>' +
                 '<div>' +
-                '<button type="button" data-menu-item-id="' + arr[i].id +'" class="btn btn-primary edit-menu-item"><i class="fa fa-pencil"></i></button>' +
-                '<button type="button" data-menu-item-id="' + arr[i].id +'" class="btn btn-danger delete-menu-item"><i class="fa fa-trash"></i></button>' +
+                '<button type="button" data-menu-item-id="' + arr[i].menu_item_id +'" class="btn btn-primary edit-menu-item"><i class="fa fa-pencil"></i></button>' +
+                '<button type="button" data-menu-item-id="' + arr[i].menu_item_id +'" class="btn btn-danger delete-menu-item"><i class="fa fa-trash"></i></button>' +
             '</div>';
             if(arr[i].children) {
               branch += menuList(arr[i].children, step + 1);

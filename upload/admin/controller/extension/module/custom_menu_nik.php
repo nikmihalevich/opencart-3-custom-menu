@@ -192,10 +192,10 @@ class ControllerExtensionModuleCustomMenuNik extends Controller {
 
             $data['select_items'] = $menu_items;
 
-            $tree = $this->buildTree($menu_items);
+            $tree = $this->buildMenuTree($menu_items);
 
 //            echo "<pre>";
-//            print_r($menu_items);
+//            print_r($tree);
 //            echo "</pre>";
 
             $data['menu_items'] = $tree;
@@ -332,14 +332,34 @@ class ControllerExtensionModuleCustomMenuNik extends Controller {
         return $branch;
     }
 
+    private function buildMenuTree(array $elements, $parentId = 0) {
+        $branch = array();
+
+        foreach ($elements as $element) {
+            if ($element['parent_id'] == $parentId) {
+                $children = $this->buildMenuTree($elements, $element['menu_item_id']);
+                if ($children) {
+                    $element['children'] = $children;
+                }
+                $branch[] = $element;
+            }
+        }
+
+        return $branch;
+    }
+
     public function getSelectItems() {
         if(isset($this->request->get['module_id']) && $this->request->server['REQUEST_METHOD'] == 'GET') {
             $this->load->model('extension/module/custom_menu_nik');
 
-            $results = $this->model_extension_module_custom_menu_nik->getMenuItems($this->request->get['module_id']);
+            $menu_items = $this->model_extension_module_custom_menu_nik->getMenuItemsForSelect($this->request->get['module_id']);
+            $selectItems = array();
+            foreach($menu_items as $menu_item) {
+                $selectItems[$menu_item['language_id']][] = $menu_item;
+            }
 
             $this->response->addHeader('Content-Type: application/json');
-            $this->response->setOutput(json_encode($results));
+            $this->response->setOutput(json_encode($selectItems));
         }
     }
 
@@ -351,27 +371,37 @@ class ControllerExtensionModuleCustomMenuNik extends Controller {
 
             $this->load->model('tool/image');
 
-            if (!empty($results) && isset($results['image']) && is_file(DIR_IMAGE . $results['image'])) {
-                $results['thumb'] = $this->model_tool_image->resize($results['image'], 100, 100);
-            } else {
-                $results['thumb'] = $this->model_tool_image->resize('no_image.png', 100, 100);
+            $items = array();
+
+            foreach($results as $result) {
+                if (!empty($result) && isset($result['image']) && is_file(DIR_IMAGE . $result['image'])) {
+                    $result['thumb'] = $this->model_tool_image->resize($result['image'], 100, 100);
+                } else {
+                    $result['thumb'] = $this->model_tool_image->resize('no_image.png', 100, 100);
+                }
+
+                $items[$result['language_id']] = $result;
             }
 
+//            var_dump($items);
+
             if(isset($this->request->get['module_id'])) {
-                $menu_items = $this->model_extension_module_custom_menu_nik->getMenuItems($this->request->get['module_id']);
-                foreach ($menu_items as $k => $menu_item) {
-                    if ($menu_item['id'] === $results['id']) {
-                        unset($menu_items[$k]);
+                $menu_items = $this->model_extension_module_custom_menu_nik->getMenuItemsForSelect($this->request->get['module_id']);
+                $selectItems = array();
+                foreach($menu_items as $menu_item) {
+                    $selectItems[$menu_item['language_id']][] = $menu_item;
+                }
+
+                foreach ($selectItems as $language_id => $selectItem) {
+                    foreach ($selectItem as $k => $item) {
+                        if ($item['menu_item_id'] == $this->request->get['menu_item_id']) {
+                            unset($selectItem[$k]);
+                        }
                     }
-                }
-                $sort_order = array();
-
-                foreach ($menu_items as $key => $value) {
-                    $sort_order[$key] = $value['name'];
+                    $selectItems[$language_id] = array_values($selectItem);
                 }
 
-                array_multisort($sort_order, SORT_ASC, $menu_items);
-                $results['menu_items'] = $menu_items;
+                $results['menu_items'] = $selectItems;
             }
 
             $menu_items_blocks = $this->model_extension_module_custom_menu_nik->getMenuItemBlocks($this->request->get['menu_item_id']);
@@ -388,6 +418,8 @@ class ControllerExtensionModuleCustomMenuNik extends Controller {
             }
 
             $results['menu_items_blocks'] = $json;
+
+//            var_dump($results['menu_items_blocks']);
 
             $this->response->addHeader('Content-Type: application/json');
             $this->response->setOutput(json_encode($results));
@@ -423,7 +455,7 @@ class ControllerExtensionModuleCustomMenuNik extends Controller {
 
             $results = $this->model_extension_module_custom_menu_nik->getMenuItems($this->request->get['module_id']);
 
-            $tree = $this->buildTree($results);
+            $tree = $this->buildMenuTree($results);
 
 
             $this->response->addHeader('Content-Type: application/json');
@@ -451,7 +483,7 @@ class ControllerExtensionModuleCustomMenuNik extends Controller {
 
             $formData = $_POST;
 
-            $this->model_extension_module_custom_menu_nik->editMenuItem($this->request->get['menu_item_id'], $formData['menu_item'][(int)$this->config->get('config_language_id')]);
+            $this->model_extension_module_custom_menu_nik->editMenuItem($this->request->get['menu_item_id'], $formData['menu_item']);
 
             $this->response->setOutput('success');
         }
