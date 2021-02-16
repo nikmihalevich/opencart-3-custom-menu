@@ -70,7 +70,7 @@
       margin-bottom: 80px;
     }
 
-    .sidenav span, .dropdown-btn {
+    .sidenav span, button.dropdown-btn {
       padding: 6px 8px 6px 16px;
       text-decoration: none;
       font-size: 20px;
@@ -107,10 +107,23 @@
         <span data-img="{{ item.thumb }}" class="{{ item.class }}"><a href="{{ item.link }}">{{ item.name }}</a></span>
       {% elseif item.children %}
 
-        <button type="button" data-img="{{ item.thumb }}" class="dropdown-btn {{ item.class }}">
-          <a href="{{ item.link }}">{{ item.name }}</a>
-          <i class="fa fa-caret-down pull-right"></i>
-        </button>
+        {% if item.link %}
+          <div>
+            <span>
+              <a href="{{ item.link }}">{{ item.name }}</a>
+              <i class="fa fa-caret-down pull-right dropdown-btn"></i>
+            </span>
+          </div>
+        {% else %}
+          <div>
+            <div>
+              <button type="button" data-img="{{ item.thumb }}" class="dropdown-btn {{ item.class }}">
+                <a href="#" onclick="e.preventDefault()">{{ item.name }}</a>
+                <i class="fa fa-caret-down pull-right"></i>
+              </button>
+            </div>
+          </div>
+        {% endif %}
         <div class="dropdown-container" style="margin-left: 20px;">
           {{ tree.list(item.children, step + 1) }}
         </div>
@@ -118,7 +131,50 @@
     {% endfor %}
   {% endmacro %}
 
-  <div class="sidenav">
+  {% macro mobilelist(items, step = 1) %}
+    {% import _self as tree %}
+
+    {% for item in items %}
+      {% if not item.children  %}
+        <li class="{{ item.class }}" data-img="{{ item.thumb }}"><a href="{{ item.link }}">{{ item.name }}</a></li>
+      {% elseif item.children %}
+
+        <li class="{{ item.class }}" data-img="{{ item.thumb }}"><a href="{{ item.link }}">{{ item.name }}</a>
+          <ul class="list-unstyled" style="display: flex; flex-direction: column">
+            {{ tree.mobilelist(item.children, step + 1) }}
+          </ul>
+        </li>
+      {% endif %}
+    {% endfor %}
+  {% endmacro %}
+
+  <nav id="menu" class="navbar visible-xs">
+    <div class="navbar-header"><span id="category" class="visible-xs">{{ setting.name }}</span>
+      <button type="button" class="btn btn-navbar navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse"><i class="fa fa-bars"></i></button>
+    </div>
+    <div class="collapse navbar-collapse navbar-ex1-collapse visible-xs">
+
+      <ul class="nav navbar-nav" style="width: 100%;">
+        {% for item in menu %}
+          {% if item.children %}
+            <li class="{% if setting.display_type != '0' %}dropdown {% endif %}{{ item.class }}" data-img="{{ item.thumb }}"><a href="{{ item.link }}" class="dropdown-toggle" data-toggle="dropdown">{{ item.name }}</a>
+              <div class="dropdown-menu">
+                <div class="dropdown-inner">
+                  <ul class="list-unstyled" style="display: flex; flex-direction: column">
+                    {{ _self.mobilelist(item.children) }}
+                  </ul>
+                </div>
+            </li>
+          {% else %}
+            <li class="{{ item.class }}" data-img="{{ item.thumb }}"><a href="{{ item.link }}">{{ item.name }}</a></li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+
+    </div>
+  </nav>
+
+  <div class="sidenav hidden-xs d-none">
     {{ _self.list(menu) }}
   </div>
 
@@ -128,12 +184,14 @@
 
       for (i = 0; i < dropdown.length; i++) {
           dropdown[i].addEventListener("click", function() {
-              this.classList.toggle("active");
-              var dropdownContent = this.nextElementSibling;
-              if (dropdownContent.style.display === "block") {
-                  dropdownContent.style.display = "none";
+              // this.classList.toggle("active");
+              $(this).parent().parent().toggleClass("active")
+              var dropdownContent = $(this).parent().parent().next();
+              console.log(dropdownContent)
+              if (dropdownContent.is(':visible')) {
+                  dropdownContent.hide()
               } else {
-                  dropdownContent.style.display = "block";
+                  dropdownContent.show()
               }
           });
       }
@@ -211,7 +269,11 @@
   <div class="sidenav-other">
     {% for item in menu %}
       {% if not item.blocks %}
-      <span class="{{ item.class }}" data-img="{{ item.thumb }}"><a href="{{ item.link }}">{{ item.name }}</a></span>
+        {% if item.link %}
+          <span class="{{ item.class }}" data-img="{{ item.thumb }}"><a href="{{ item.link }}">{{ item.name }}</a></span>
+        {% else %}
+          <span class="{{ item.class }}" data-img="{{ item.thumb }}">{{ item.name }}</span>
+        {% endif %}
       {% elseif item.blocks %}
         {% if item.link %}
           <span class="{{ item.class }}" data-img="{{ item.thumb }}">
@@ -292,7 +354,7 @@
       for (let k = 0; k < dropdown.length; k++) {
           let temp = k;
           dropdown[k].addEventListener("click", function() {
-              this.classList.toggle("active");
+
               var dropdownContent = this.nextElementSibling;
               if (dropdownContent.style.display === "block") {
                   dropdownContent.style.display = "none";
@@ -300,6 +362,7 @@
                   dropdownContent.style.display = "block";
                   // hide other blocks
               }
+              this.classList.toggle("active");
           });
       }
   </script>

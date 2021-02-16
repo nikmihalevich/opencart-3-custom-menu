@@ -18,7 +18,7 @@ class ControllerExtensionModuleCustomMenuNik extends Controller {
                     $menu[$k]['thumb'] = '';
                 }
                 if($setting['type_menu'] != '1') {
-                    $blocks = $this->model_extension_module_custom_menu_nik->getBlocks($item['id']);
+                    $blocks = $this->model_extension_module_custom_menu_nik->getBlocks($item['menu_item_id']);
                     $item_blocks = array();
                     if ($blocks) {
                         foreach ($blocks as $kk => $block) {
@@ -87,7 +87,7 @@ class ControllerExtensionModuleCustomMenuNik extends Controller {
 
         foreach ($elements as $element) {
             if ($element['parent_id'] == $parentId) {
-                $children = $this->buildTree($elements, $element['id']);
+                $children = $this->buildTree($elements, $element['menu_item_id']);
                 if ($children) {
                     $element['children'] = $children;
                 }
