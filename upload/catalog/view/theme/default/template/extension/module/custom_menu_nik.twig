@@ -343,6 +343,15 @@
               if ($(dropdownContent).is(":visible")) {
                   dropdownContent.hide()
               } else {
+                  $('.dropdown-container').each(function (i, item) {
+                      $(item).hide()
+                  })
+                  $('.dropdown-btn-other').each(function (i, item) {
+                      $(item).removeClass('active')
+                  })
+                  $('.dropdown-arrow').each(function (i, item) {
+                      $(item).parents('span').removeClass('active')
+                  })
                   dropdownContent.show()
                   // hide other blocks
               }
@@ -359,6 +368,15 @@
               if (dropdownContent.style.display === "block") {
                   dropdownContent.style.display = "none";
               } else {
+                  $('.dropdown-container').each(function (i, item) {
+                      $(item).hide()
+                  })
+                  $('.dropdown-btn-other').each(function (i, item) {
+                      $(item).removeClass('active')
+                  })
+                  $('.dropdown-arrow').each(function (i, item) {
+                      $(item).parents('span').removeClass('active')
+                  })
                   dropdownContent.style.display = "block";
                   // hide other blocks
               }
