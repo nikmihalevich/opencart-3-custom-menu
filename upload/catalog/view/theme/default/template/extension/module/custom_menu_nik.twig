@@ -6,9 +6,9 @@
   </style>
     <nav id="menu" class="navbar">
       <div class="navbar-header"><span id="category" class="visible-xs">{{ setting.name }}</span>
-        <button type="button" class="btn btn-navbar navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse"><i class="fa fa-bars"></i></button>
+        <button type="button" class="btn btn-navbar navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse{{ module }}"><i class="fa fa-bars"></i></button>
       </div>
-      <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <div class="collapse navbar-collapse navbar-ex1-collapse{{ module }}">
 
         <ul class="nav navbar-nav" style="width: 100%;">
           {% for item in menu %}
@@ -28,7 +28,7 @@
 
                           <div class="row" style="display: flex; margin: 5px 0;">
                             {% for i in counterStart..counterEnd  %}
-                              <li class="col-xs-3">
+                              <li class="col-xs-3" style="min-width: 160px">
                                 {% if item.blocks[i] %}
                                   {% for block in item.blocks[i] %}
                                     {% if block.link_name %}
@@ -66,7 +66,7 @@
   <style>
     .sidenav {
       height: 100%;
-      z-index: 1;
+      z-index: 999;
       margin-bottom: 80px;
     }
 
@@ -150,9 +150,9 @@
 
   <nav id="menu" class="navbar visible-xs">
     <div class="navbar-header"><span id="category" class="visible-xs">{{ setting.name }}</span>
-      <button type="button" class="btn btn-navbar navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse"><i class="fa fa-bars"></i></button>
+      <button type="button" class="btn btn-navbar navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse{{ module }}"><i class="fa fa-bars"></i></button>
     </div>
-    <div class="collapse navbar-collapse navbar-ex1-collapse visible-xs">
+    <div class="collapse navbar-collapse navbar-ex1-collapse{{ module }} hidden-sm">
 
       <ul class="nav navbar-nav" style="width: 100%;">
         {% for item in menu %}
@@ -182,19 +182,37 @@
       var dropdown = document.getElementsByClassName("dropdown-btn");
       var i;
 
-      for (i = 0; i < dropdown.length; i++) {
-          dropdown[i].addEventListener("click", function() {
-              // this.classList.toggle("active");
-              $(this).parent().parent().toggleClass("active")
-              var dropdownContent = $(this).parent().parent().next();
-              console.log(dropdownContent)
-              if (dropdownContent.is(':visible')) {
-                  dropdownContent.hide()
-              } else {
-                  dropdownContent.show()
-              }
-          });
-      }
+      {% if setting.display_type == "0" %}
+
+          for (i = 0; i < dropdown.length; i++) {
+              dropdown[i].addEventListener("click", function() {
+                  $(this).parent().parent().toggleClass("active")
+                  var dropdownContent = $(this).parent().parent().next();
+
+                  if (dropdownContent.is(':visible')) {
+                      dropdownContent.hide()
+                  } else {
+                      dropdownContent.show()
+                  }
+              });
+          }
+
+      {% else %}
+
+        for (i = 0; i < dropdown.length; i++) {
+            dropdown[i].addEventListener("mouseover", function() {
+                $(this).parent().parent().toggleClass("active")
+                var dropdownContent = $(this).parent().parent().next();
+
+                if (dropdownContent.is(':visible')) {
+                    dropdownContent.hide()
+                } else {
+                    dropdownContent.show()
+                }
+            });
+        }
+
+      {% endif %}
   </script>
 
 {% elseif setting.type_menu == "2" %}
@@ -203,7 +221,7 @@
     .sidenav-other {
       height: 100%;
       width: 100%;
-      z-index: 1;
+      z-index: 999;
       position: relative;
     }
 
@@ -332,7 +350,10 @@
 
   <script type="text/javascript">
       var dropdownOther = document.getElementsByClassName("dropdown-arrow");
+      var dropdown = document.getElementsByClassName("dropdown-btn-other");
       var j;
+
+      {% if setting.display_type == '0' %}
 
       for (j = 0; j < dropdownOther.length; j++) {
           let temp = j;
@@ -359,7 +380,7 @@
           });
       }
 
-      var dropdown = document.getElementsByClassName("dropdown-btn-other");
+
       for (let k = 0; k < dropdown.length; k++) {
           let temp = k;
           dropdown[k].addEventListener("click", function() {
@@ -383,6 +404,60 @@
               this.classList.toggle("active");
           });
       }
+
+      {% else %}
+
+      for (j = 0; j < dropdownOther.length; j++) {
+          let temp = j;
+          dropdownOther[j].addEventListener("mouseover", function() {
+              let span = $(this).parents('span')
+
+              var dropdownContent = span.next();
+              if ($(dropdownContent).is(":visible")) {
+                  dropdownContent.hide()
+              } else {
+                  $('.dropdown-container').each(function (i, item) {
+                      $(item).hide()
+                  })
+                  $('.dropdown-btn-other').each(function (i, item) {
+                      $(item).removeClass('active')
+                  })
+                  $('.dropdown-arrow').each(function (i, item) {
+                      $(item).parents('span').removeClass('active')
+                  })
+                  dropdownContent.show()
+                  // hide other blocks
+              }
+              span.toggleClass('active')
+          });
+      }
+
+
+      for (let k = 0; k < dropdown.length; k++) {
+          let temp = k;
+          dropdown[k].addEventListener("mouseover", function() {
+
+              var dropdownContent = this.nextElementSibling;
+              if (dropdownContent.style.display === "block") {
+                  dropdownContent.style.display = "none";
+              } else {
+                  $('.dropdown-container').each(function (i, item) {
+                      $(item).hide()
+                  })
+                  $('.dropdown-btn-other').each(function (i, item) {
+                      $(item).removeClass('active')
+                  })
+                  $('.dropdown-arrow').each(function (i, item) {
+                      $(item).parents('span').removeClass('active')
+                  })
+                  dropdownContent.style.display = "block";
+                  // hide other blocks
+              }
+              this.classList.toggle("active");
+          });
+      }
+
+      {% endif %}
   </script>
 
 {% endif %}

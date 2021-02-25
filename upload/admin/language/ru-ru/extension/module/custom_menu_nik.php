@@ -33,9 +33,8 @@ $_['text_module']      = 'Модуль';
 $_['text_block_data']  = 'Данные блока';
 $_['text_onclick']     = 'По клику';
 $_['text_onhover']     = 'По наведению';
-$_['text_selected_type_menu_1'] = 'Вы выбрали первый вид меню';
-$_['text_selected_type_menu_2'] = 'Вы выбрали второй вид меню';
-$_['text_selected_type_menu_3'] = 'Вы выбрали третий вид меню';
+$_['text_selected_type_menu'] = 'Вид меню выбран';
+
 
 // Entry
 $_['entry_name']       = 'Название модуля';

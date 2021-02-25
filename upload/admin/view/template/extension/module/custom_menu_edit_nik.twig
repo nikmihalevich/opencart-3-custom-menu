@@ -1,5 +1,145 @@
 {{ header }}
 <style>
+  .sidenav {
+    height: 100%;
+    z-index: 1;
+    margin-bottom: 80px;
+  }
+
+  .sidenav span, .dropdown-btn {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 20px;
+    color: black;
+    display: block;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+    outline: none;
+    border: 1px solid #e3e3e3;
+    margin: 5px;
+    width: -webkit-fill-available;
+  }
+
+  .sidenav-other {
+    height: 100%;
+    width: 50%;
+    z-index: 1;
+    position: relative;
+  }
+
+  .sidenav-other span, .dropdown-btn-other {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 20px;
+    color: black;
+    display: block;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+    outline: none;
+    border: 1px solid #e3e3e3;
+    margin: 5px;
+    width: 290px;
+  }
+
+  .main {
+    margin-left: 200px;
+    font-size: 20px;
+    padding: 0 10px;
+  }
+
+  .active-item {
+    background-color: #EEEEEE;
+  }
+
+  .sidenav .dropdown-container {
+    display: none;
+    margin-left: 40px;
+  }
+
+  .sidenav-other .dropdown-container {
+    display: none;
+    position: absolute;
+    left: 50%;
+    border: 1px solid #e3e3e3;
+    width: 97%;
+    padding: 5px;
+  }
+
+  .sidenav-other .dropdown-container div {
+    height: 70px;
+    padding: 3px;
+  }
+
+  .sidenav-other .dropdown-container div a {
+    color: black;
+    border: 1px solid #e3e3e3;
+    display: block;
+    height: 100%;
+    margin: 0;
+  }
+
+  <!-- ----------------- HORIZONTAL MENU -------------------------- -->
+
+  .horizontal-menu {
+    width: 100%;
+    margin: 0 auto 30px;
+  }
+  .horizontal-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .topmenu {
+    position: relative;
+  }
+  .topmenu > li {
+    display: inline-block;
+    position: static;
+  }
+  .topmenu > li:last-child {
+    margin-right: 0;
+  }
+  .horizontal-menu a {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    outline: none;
+    transition: .5s linear;
+  }
+  .horizontal-menu .fa {
+    color: inherit;
+    padding-left: 10px;
+  }
+  .submenu {
+    position: absolute;
+    top: 115%;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+    -webkit-transition: 0.5s ease-in-out;
+    -moz-transition: 0.5s ease-in-out;
+    -o-transition: 0.5s ease-in-out;
+    transition: 0.5s ease-in-out;
+    background-color: #e6e6e6;
+  }
+  .submenu > li > a {
+    background-color: #fff;
+    height: 100px;
+  }
+  .horizontal-menu .topmenu li {
+    border: 1px solid #e3e3e3;
+    padding: 0 60px;
+  }
+  .horizontal-menu ul a {
+    color: #695753;
+  }
+  .horizontal-menu .submenu li {
+    padding: 3px 7px;
+    border: none;
+  }
+
   .menu-block .btn {
     margin: 2px;
   }
@@ -162,7 +302,218 @@
           <div class="form-group">
             <label class="col-sm-2 control-label" for="input-name">{{ entry_menu_type }}</label>
             <div class="col-sm-10">
-              <input type="text" disabled="disabled" name="type_menu" value="{% if type_menu == '0' %}{{ text_horizontal }}{% elseif type_menu == '1' %}{{ text_vertical }} 1{% elseif type_menu == '2' %}{{ text_vertical }} 2{% endif %}" placeholder="{{ entry_menu_type }}" id="input-name" class="form-control" />
+              {% if type_menu == '0' %}
+                <div id="horizontal-border" style="width: 100%; border: 1px solid #e3e3e3; height: 350px;">
+                  <nav class="horizontal-menu">
+                    <ul class="topmenu">
+                      <li><a href="#">{{ text_main }}</a></li>
+                      <li><a href="#">{{ text_product_catalog }} <i class="fa fa-angle-down"></i></a>
+                        <ul class="submenu">
+                          <li class="col-sm-3">
+                            <a href="">
+                              {{ text_inner_block }}
+                              <br>
+                              {{ help_menu_item }}
+                            </a>
+                          </li>
+                          <li class="col-sm-3">
+                            <a href="">
+                              {{ text_inner_block }}
+                              <br>
+                              {{ help_menu_item }}
+                            </a>
+                          </li>
+                          <li class="col-sm-3">
+                            <a href="">
+                              {{ text_inner_block }}
+                              <br>
+                              {{ help_menu_item }}
+                            </a>
+                          </li>
+                          <li class="col-sm-3">
+                            <a href="">
+                              {{ text_inner_block }}
+                              <br>
+                              {{ help_menu_item }}
+                            </a>
+                          </li>
+                          <li class="col-sm-3">
+                            <a href="">
+                              {{ text_inner_block }}
+                              <br>
+                              {{ help_menu_item }}
+                            </a>
+                          </li>
+                          <li class="col-sm-3">
+                            <a href="">
+                              {{ text_inner_block }}
+                              <br>
+                              {{ help_menu_item }}
+                            </a>
+                          </li>
+                          <li class="col-sm-3">
+                            <a href="">
+                              {{ text_inner_block }}
+                              <br>
+                              {{ help_menu_item }}
+                            </a>
+                          </li>
+                          <li class="col-sm-3">
+                            <a href="">
+                              {{ text_inner_block }}
+                              <br>
+                              {{ help_menu_item }}
+                            </a>
+                          </li>
+                        </ul>
+                      </li>
+                      <li><a href="#">{{ text_link_classmates }}</a></li>
+                      <li><a href="#">{{ text_articles }} <i class="fa fa-angle-down"></i></a>
+                        <ul class="submenu">
+                          <li class="col-sm-3">
+                            <a href="">
+                              {{ text_inner_block }}
+                              <br>
+                              {{ help_menu_item }}
+                            </a>
+                          </li>
+                          <li class="col-sm-3">
+                            <a href="">
+                              {{ text_inner_block }}
+                              <br>
+                              {{ help_menu_item }}
+                            </a>
+                          </li>
+                          <li class="col-sm-3">
+                            <a href="">
+                              {{ text_inner_block }}
+                              <br>
+                              {{ help_menu_item }}
+                            </a>
+                          </li>
+                          <li class="col-sm-3">
+                            <a href="">
+                              {{ text_inner_block }}
+                              <br>
+                              {{ help_menu_item }}
+                            </a>
+                          </li>
+                          <li class="col-sm-3">
+                            <a href="">
+                              {{ text_inner_block }}
+                              <br>
+                              {{ help_menu_item }}
+                            </a>
+                          </li>
+                          <li class="col-sm-3">
+                            <a href="">
+                              {{ text_inner_block }}
+                              <br>
+                              {{ help_menu_item }}
+                            </a>
+                          </li>
+                          <li class="col-sm-3">
+                            <a href="">
+                              {{ text_inner_block }}
+                              <br>
+                              {{ help_menu_item }}
+                            </a>
+                          </li>
+                          <li class="col-sm-3">
+                            <a href="">
+                              {{ text_inner_block }}
+                              <br>
+                              {{ help_menu_item }}
+                            </a>
+                          </li>
+                        </ul>
+                      </li>
+                      <li><a href="#">{{ text_contacts }}</a></li>
+                    </ul>
+                  </nav>
+                </div>
+              {% elseif type_menu == '1' %}
+                <div id="vertical1-border" style="width: 100%; border: 1px solid #e3e3e3; min-height: 350px; height: 100%;">
+                  <div class="sidenav">
+                    <span>{{ text_main }}</span>
+                    <button type="button" class="dropdown-btn">
+                      {{ text_product_catalog }}
+                      <i class="fa fa-caret-down pull-right"></i>
+                    </button>
+                    <div class="dropdown-container">
+                      <span>{{ text_tools }}</span>
+                      <span>{{ text_tea_products }}</span>
+                    </div>
+                    <span>{{ text_link_classmates }}</span>
+                    <button type="button" class="dropdown-btn">
+                      {{ text_articles }}
+                      <i class="fa fa-caret-down pull-right"></i>
+                    </button>
+                    <div class="dropdown-container">
+                      <span>{{ text_article_1 }}</span>
+                      <span>{{ text_article_2 }}</span>
+                      <span>{{ text_article_3 }}</span>
+                    </div>
+                    <span>{{ text_contacts }}</span>
+                  </div>
+                </div>
+              {% elseif type_menu == '2' %}
+                <div id="vertical2-border" style="width: 100%; border: 1px solid #e3e3e3; height: 350px;">
+                  <div class="sidenav-other">
+                    <span>{{ text_main }}</span>
+                    <button type="button" class="dropdown-btn-other">
+                      {{ text_product_catalog }}
+                      <i class="fa fa-caret-right pull-right"></i>
+                    </button>
+                    <div class="dropdown-container" style="top: 42px;">
+                      <div class="col-sm-4">
+                        <a href="#">{{ text_inner_block }}</a>
+                      </div>
+                      <div class="col-sm-4">
+                        <a href="#">{{ text_inner_block }}</a>
+                      </div>
+                      <div class="col-sm-4">
+                        <a href="#">{{ text_inner_block }}</a>
+                      </div>
+                      <div class="col-sm-4">
+                        <a href="#">{{ text_inner_block }}</a>
+                      </div>
+                      <div class="col-sm-4">
+                        <a href="#">{{ text_inner_block }}</a>
+                      </div>
+                      <div class="col-sm-4">
+                        <a href="#">{{ text_inner_block }}</a>
+                      </div>
+                    </div>
+                    <span>{{ text_link_classmates }}</span>
+                    <button type="button" class="dropdown-btn-other">
+                      {{ text_articles }}
+                      <i class="fa fa-caret-right pull-right"></i>
+                    </button>
+                    <div class="dropdown-container" style="top: 84px;">
+                      <div class="col-sm-4">
+                        <a href="#">{{ text_inner_block }}</a>
+                      </div>
+                      <div class="col-sm-4">
+                        <a href="#">{{ text_inner_block }}</a>
+                      </div>
+                      <div class="col-sm-4">
+                        <a href="#">{{ text_inner_block }}</a>
+                      </div>
+                      <div class="col-sm-4">
+                        <a href="#">{{ text_inner_block }}</a>
+                      </div>
+                      <div class="col-sm-4">
+                        <a href="#">{{ text_inner_block }}</a>
+                      </div>
+                      <div class="col-sm-4">
+                        <a href="#">{{ text_inner_block }}</a>
+                      </div>
+                    </div>
+                    <span>{{ text_contacts }}</span>
+                  </div>
+                </div>
+              {% endif %}
             </div>
           </div>
           <div class="form-group">
@@ -911,6 +1262,67 @@
       $(activeTabId).find('#input-menu-item-link' + languageId).val(link)
       $('.select-link-modal').modal('hide')
     })
+  })
+
+  $(".horizontal-menu li ul").hide(); // скрываем выпадающее меню
+  /* отбираем элемент списка, который содержит элемент с классом .submenu и добавляем ему функцию при наведении, которая показывает и скрывает выпадающее меню */
+  $(".horizontal-menu li:has('.submenu')").on('click', function(e){
+      e.preventDefault();
+      let submenus = $('.submenu');
+      for (let t = 0; t < submenus.length; t++) {
+          if($(this).find('ul.submenu')[0] !== submenus[t]) {
+              submenus[t].style.display = 'none';
+              submenus[t].parentNode.classList.remove('active-item')
+          }
+      }
+      $(this).toggleClass('active-item')
+      $(this).find('ul.submenu').toggle();
+
+  });
+
+  var dropdown = document.getElementsByClassName("dropdown-btn");
+  var i;
+
+  for (i = 0; i < dropdown.length; i++) {
+      dropdown[i].addEventListener("click", function() {
+          this.classList.toggle("active-item");
+          var dropdownContent = this.nextElementSibling;
+          if (dropdownContent.style.display === "block") {
+              dropdownContent.style.display = "none";
+          } else {
+              dropdownContent.style.display = "block";
+          }
+      });
+  }
+
+  var dropdownOther = document.getElementsByClassName("dropdown-btn-other");
+  var j;
+
+  for (j = 0; j < dropdownOther.length; j++) {
+      let temp = j;
+      dropdownOther[j].addEventListener("click", function() {
+          this.classList.toggle("active-item");
+
+          var dropdownContent = this.nextElementSibling;
+          if (dropdownContent.style.display === "block") {
+              dropdownContent.style.display = "none";
+          } else {
+              dropdownContent.style.display = "block";
+              for (let q = 0; q < dropdownOther.length; q++) {
+                  if (q !== temp) {
+                      let a = dropdownOther[q].nextElementSibling
+                      let b = dropdownOther[q]
+                      b.classList.remove('active-item')
+                      a.style.display = 'none';
+
+                  }
+              }
+          }
+      });
+  }
+
+  $('.dropdown-container a, .topmenu li a').on('click', function (e) {
+      e.preventDefault();
   })
 
   </script>

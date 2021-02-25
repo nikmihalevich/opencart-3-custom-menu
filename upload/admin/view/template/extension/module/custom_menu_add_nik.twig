@@ -225,7 +225,7 @@
 
             <div id="horizontal_type_menu">
               <div class="col-sm-10">
-                <div style="width: 100%; border: 1px solid #e3e3e3; height: 350px;">
+                <div id="horizontal-border" style="width: 100%; border: 1px solid #e3e3e3; height: 350px;">
                   <nav class="horizontal-menu">
                     <ul class="topmenu">
                       <li><a href="#">{{ text_main }}</a></li>
@@ -361,7 +361,7 @@
 
             <div id="vertical_type_menu" style="display: none;">
               <div class="col-sm-5">
-                <div style="width: 100%; border: 1px solid #e3e3e3; min-height: 350px; height: 100%;">
+                <div id="vertical1-border" style="width: 100%; border: 1px solid #e3e3e3; min-height: 350px; height: 100%;">
                   <div class="sidenav">
                     <span>{{ text_main }}</span>
                     <button type="button" class="dropdown-btn">
@@ -389,7 +389,7 @@
               </div>
 
               <div class="col-sm-5">
-                <div style="width: 100%; border: 1px solid #e3e3e3; height: 350px;">
+                <div id="vertical2-border" style="width: 100%; border: 1px solid #e3e3e3; height: 350px;">
                   <div class="sidenav-other">
                     <span>{{ text_main }}</span>
                     <button type="button" class="dropdown-btn-other">
@@ -468,7 +468,7 @@
     </div>
   </div>
 
-  <div class="modal fade" id="selectedFirstTypeMenu" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" id="selectedTypeMenu" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -478,45 +478,7 @@
           </button>
         </div>
         <div class="modal-body">
-          {{ text_selected_type_menu_1 }}
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ button_close }}</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal fade" id="selectedSecondTypeMenu" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">{{ entry_menu_view }}</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          {{ text_selected_type_menu_2 }}
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ button_close }}</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal fade" id="selectedThirdTypeMenu" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">{{ entry_menu_view }}</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          {{ text_selected_type_menu_3 }}
+          {{ text_selected_type_menu }}
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ button_close }}</button>
@@ -608,18 +570,27 @@
       })
 
       $('#select_horizontal_menu').on('click', function () {
+          $('#horizontal-border').css('border', '2px solid green')
+          $('#vertical1-border').css('border', '1px solid #e3e3e3')
+          $('#vertical2-border').css('border', '1px solid #e3e3e3')
           $('select[name="type_menu"] option[value="0"]').prop('selected', 'selected')
-          $('#selectedFirstTypeMenu').modal('show')
+          $('#selectedTypeMenu').modal('show')
       })
 
       $('#select_vertical_menu_1').on('click', function () {
+          $('#horizontal-border').css('border', '1px solid #e3e3e3')
+          $('#vertical1-border').css('border', '2px solid green')
+          $('#vertical2-border').css('border', '1px solid #e3e3e3')
           $('select[name="type_menu"] option[value="1"]').prop('selected', 'selected')
-          $('#selectedSecondTypeMenu').modal('show')
+          $('#selectedTypeMenu').modal('show')
       })
 
       $('#select_vertical_menu_2').on('click', function () {
+          $('#horizontal-border').css('border', '1px solid #e3e3e3')
+          $('#vertical1-border').css('border', '1px solid #e3e3e3')
+          $('#vertical2-border').css('border', '2px solid green')
           $('select[name="type_menu"] option[value="2"]').prop('selected', 'selected')
-          $('#selectedThirdTypeMenu').modal('show')
+          $('#selectedTypeMenu').modal('show')
       })
 
 })

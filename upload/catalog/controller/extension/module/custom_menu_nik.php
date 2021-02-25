@@ -1,6 +1,7 @@
 <?php
 class ControllerExtensionModuleCustomMenuNik extends Controller {
 	public function index($setting) {
+        static $module = 0;
 		$this->load->language('extension/module/custom_menu_nik');
 		$this->load->model('extension/module/custom_menu_nik');
 
@@ -78,6 +79,12 @@ class ControllerExtensionModuleCustomMenuNik extends Controller {
             $data['setting'] = $setting;
             $data['menu'] = $this->buildTree($menu);
         }
+
+//		echo "<pre>";
+//		print_r($data);
+//		echo "</pre>";
+
+        $data['module'] = $module++;
 
 		return $this->load->view('extension/module/custom_menu_nik', $data);
 	}
